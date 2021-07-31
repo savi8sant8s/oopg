@@ -1,4 +1,4 @@
-const SCRIPT_CREATE = {
+export const SCRIPT_CREATE = {
     TABLE_AUTH:
         `CREATE TABLE IF NOT EXISTS adm (
             id_adm SERIAL PRIMARY KEY NOT NULL,
@@ -20,5 +20,3 @@ const SCRIPT_CREATE = {
             FOREIGN KEY(id_adm) REFERENCES adm(id_adm)
         )` 
 };
-
-export default SCRIPT_CREATE;

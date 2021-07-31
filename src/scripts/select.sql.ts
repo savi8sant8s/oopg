@@ -1,5 +1,5 @@
-const SCRIPT_SELECT = {
-    CHECK_CREDENTIALS: `SELECT COALESCE ((SELECT 1 FROM adm WHERE "email" = $1 AND "password" = $2), 0) AS result    ` ,
+export const SCRIPT_SELECT = {
+    GET_HASH: `SELECT password FROM adm WHERE "email" = $1`,
+    GET_ID: `SELECT id_adm as id FROM adm WHERE "email" = $1` ,
+    CHECK_EMAIL: `SELECT COALESCE ((SELECT 1 FROM adm WHERE "email" = $1), 0) AS result` ,
 };
-
-export default SCRIPT_SELECT;

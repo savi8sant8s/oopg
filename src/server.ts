@@ -1,11 +1,12 @@
 import express from 'express';
-import authRouter from './routers/auth.router';
+import admAuthRouter from './routers/adm.auth.router';
 import pool from './dbconfig/dbconnector';
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
-import SCRIPT_CREATE from './scripts/create.sql';
+import { SCRIPT_CREATE } from './scripts/create.sql';
+import moment from 'moment';
 
 class Server {
     private app;
@@ -15,6 +16,7 @@ class Server {
         this.config();
         this.routerConfig();
         this.dbConnect();
+        moment.locale('pt-br');
     }
 
     private config() {
@@ -37,7 +39,7 @@ class Server {
     }
 
     private routerConfig() {
-        this.app.use("/api/v1/adm", authRouter);
+        this.app.use("/api/v1/adm", admAuthRouter);
     }
 
     public start = (port: number) => {
