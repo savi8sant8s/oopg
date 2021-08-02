@@ -22,7 +22,7 @@ model Session {
   creationDate DateTime @default(now())
   updatedDate  DateTime?
   valid        Boolean @default(true)
-  token        String
+  token        String @unique
   adm          Adm @relation(fields: [admId], references: [id])
   admId        Int
 }
