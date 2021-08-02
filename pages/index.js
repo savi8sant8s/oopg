@@ -1,4 +1,5 @@
 import { Component } from "react";
+import ImportSheet from "../components/import-sheet";
 
 export default class App extends Component {
 
@@ -9,7 +10,8 @@ export default class App extends Component {
   render(){
     return (
       <div>
-        dsd
+        Importar planilha
+        <ImportSheet />
       </div>
     )
   }
