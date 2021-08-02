@@ -27,19 +27,10 @@ model Sessao {
   adminId             Int
 }
 
-enum Categoria {
-  SAUDE
-  ASSISTENCIA_SOCIAL
-  URBANISMO
-  EDUCACAO
-  ADMINISTRACAO
-}
-
 model Obra {
   id                                  Int @id @default(autoincrement()) 
   dataCriacao                         DateTime @default(now())
   dataAtualizacao                     DateTime?
-  categoria                           Categoria?
   comentarios                         Comentario[]
   notas                               Nota[]
   numeroLicitacao                     String @unique 
