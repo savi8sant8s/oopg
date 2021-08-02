@@ -15,26 +15,26 @@ export default class Categorias extends Component {
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-around">
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Saúde</libel>
                             </div>
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Educação</libel>
                             </div>
                         </div>
                         <div class="d-flex justify-content-around">
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Assistência Social</libel>
                             </div>
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Administração</libel>
                             </div>
                         </div>
                         <div class="d-flex justify-content-around">
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Urbanismo</libel>
                             </div>
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Todas</libel>
                             </div>
                         </div>

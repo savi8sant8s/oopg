@@ -9,23 +9,23 @@ export default class Dashboard extends Component {
     render() {
         return (
             <div>
-                <div class="card text-center">
+                <div class="card text-center h-100">
                     <div class="card-header">
                         Dados de 2019/2020
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-around">
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Total de obras</libel>
                             </div>
-                            <div class="card card-box m-2">
+                            <div class="card card-box m-3">
                                 <libel class="center">Total Gasto/investido</libel>
                             </div>
                         </div>
                         <div class="dashboard-slide">
-                            <Carousel showThumbs={false}>
+                            <Carousel showThumbs={false} dynamicHeight={true}>
                                 <div>
-                                    <img src="https://i.imgur.com/DzYwzgT.jpeg" />
+                                    <img src="https://i.imgur.com/1oryjYM.jpeg" />
                                     <p className="legend">Legend 1</p>
                                 </div>
                                 <div>
