@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GoogleLogin2 from "../components/sigin-google";
 
 export default class App extends Component {
 
@@ -10,7 +9,7 @@ export default class App extends Component {
   render(){
     return (
       <div>
-        <GoogleLogin2 />
+        dsd
       </div>
     )
   }
