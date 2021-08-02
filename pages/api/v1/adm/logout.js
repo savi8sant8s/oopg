@@ -10,11 +10,11 @@ export default validateBody(logoutSchema, async (req, res) => {
     let response = {};
     response.timestamp = moment().locale("pt-br").format();
 
-    let openSession = await prisma.session.findFirst({ where: { token: req.body.token, valid: true } });
+    let openSession = await prisma.sessao.findFirst({ where: { token: req.body.token, valido: true } });
     if (!openSession) {
         response.codeStatus = CODE_STATUS.INVALID_TOKEN;
     } else {
-        await prisma.session.update({ where: { token: req.body.token }, data: { valid: false, updatedDate: response.timestamp } });
+        await prisma.sessao.update({ where: { token: req.body.token }, data: { valido: false, dataAtualizacao: response.timestamp } });
         response.codeStatus = CODE_STATUS.LOGOUT_SUCCESS;
     }
     res.status(200).json(response);
