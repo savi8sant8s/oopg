@@ -1,4 +1,6 @@
 import { Component } from "react";
+import style from '../styles/style1.module.css';
+
 
 export default class Categorias extends Component {
 
@@ -10,13 +12,13 @@ export default class Categorias extends Component {
         return (
             <div>
                 <div class="card text-center">
-                    <div class="card-header">
-                        Selecione uma categoria
+                    <div class="card-header" >
+                        <h4 className={style.title2}>selecionar categoria</h4>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-around">
                             <div class="card card-box m-3">
-                                <libel class="center">Saúde</libel>
+                                <libel className={style.title2 + " center"} >Saúde</libel>
                             </div>
                             <div class="card card-box m-3">
                                 <libel class="center">Educação</libel>

@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import Head from "next/head";
 
-export default function OOPG({ Component, pageProps }){
+export default function OOPG({ Component, pageProps }) {
   return (
     <>
       <Head>
@@ -10,7 +10,7 @@ export default function OOPG({ Component, pageProps }){
         <title>OOPG</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Component {...pageProps} />
+          <Component {...pageProps} />
     </>
-  )
+        )
 };

@@ -1,4 +1,5 @@
 import { Component } from "react";
+import style from '../styles/style1.module.css';
 
 export default class Footer extends Component {
 
@@ -9,8 +10,8 @@ export default class Footer extends Component {
     render() {
         return (
             <div>
-                <nav class="navbar navbar-expand-lg justify-content-center navbar-light bg-light">                    
-                    <a class="navbar-brand style: margin-right=1rem;" href="#">É nós</a>                 
+                <nav class={style.bg1 + " navbar navbar-expand-lg justify-content-center navbar-light"}>                    
+                    <a class="navbar-brand style: margin-right=1rem; text-white" href="#">Todos os direitos reservados.</a>                 
                 </nav>
             </div>
         )
