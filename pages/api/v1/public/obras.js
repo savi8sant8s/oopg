@@ -11,3 +11,4 @@ export default async (req, res) => {
     response.obras = await prisma.obra.findMany();
     res.status(200).json(response);
 };
+

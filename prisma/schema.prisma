@@ -60,11 +60,10 @@ model Comentario {
   id                  Int @id @default(autoincrement()) 
   dataCriacao         DateTime @default(now())
   dataAtualizacao     DateTime?
-  token               String @unique
   titulo              String
   mensagem            String
   nomeUsuario         String
-  email               String
+  email               String @unique
   imagemUrl           String
   obra                Obra @relation(fields: [obraId], references: [id])
   obraId              Int
@@ -74,7 +73,6 @@ model Nota {
   id                  Int @id @default(autoincrement()) 
   dataCriacao         DateTime @default(now())
   dataAtualizacao     DateTime?
-  token               String @unique
   nota                Int
   email               String @unique
   obra                Obra @relation(fields: [obraId], references: [id])
@@ -85,7 +83,6 @@ model Noticia {
   id                  Int @id @default(autoincrement()) 
   dataCriacao         DateTime @default(now())
   dataAtualizacao     DateTime?
-  token               String @unique
   titulo              String
   mensagem            String
   link                String

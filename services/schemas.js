@@ -8,3 +8,8 @@ export const loginSchema = yup.object({
 export const logoutSchema = yup.object({
   token: yup.string().min(30).max(30).required()
 });
+
+export const noteSchema = yup.object({
+  email: yup.string().email().required(),
+  note: yup.string().matches(/^[123]{1}$/).required()
+});
