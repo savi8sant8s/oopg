@@ -33,27 +33,28 @@ model Obra {
   dataAtualizacao                     DateTime?
   comentarios                         Comentario[]
   notas                               Nota[]
-  numeroLicitacao                     String @unique 
+  numeroLicitacao                     String  
   descricao                           String
   convenioNumeroAno                   String?
   convenioConcedente                  String?
   convenioRepasse                     Float?
   convenioContrapartida               Float?
   contratadoCpfCcnpj                  String
-  contratadoRasaoSocial               String
+  contratadoRazaoSocial               String
   contratoNumeroAno                   String
   contratoDataInicio                  String
   contratoPrazo                       String
   contratoValorContratado             Float
   contratoDataConclusao               String?
   aditivoPrazoAditado                 String?
-  aditivoValorAditadoAcumulado        String?
+  aditivoValorAditado                 String?
   execucaoReajuste                    Float?
   execucaoNaturezaDespesa             String
   execucaoValorMedidoAcumulado        Float
   execucaoValorPagoAcumuladoPeriodo   Float?
   execucaoValorPagoAcumuladoExercicio Float?
   valorPagoAcumulado                  Float 
+  situacao                            String
 }
 
 model Comentario {
