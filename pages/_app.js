@@ -1,5 +1,5 @@
 import '../styles/globals.css';
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Head from "next/head";
 import Footer from '../component/footer';
 import Menu from '../component/menu';
