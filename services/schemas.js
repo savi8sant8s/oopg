@@ -19,6 +19,5 @@ export const commentSchema = yup.object({
   msg: yup.string().min(5).max(50).required(),
   username: yup.string().min(5).max(50).required(),
   imageUrl: yup.string().min(80).max(100).required(),
-  email: yup.string().email().required(),
-  note: yup.string().matches(/^[123]{1}$/).required()
+  email: yup.string().email().required()
 });
