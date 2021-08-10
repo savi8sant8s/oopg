@@ -9,8 +9,6 @@ import {
   ListGroupItem,
   Row,
   Col,
-  Button,
-  ButtonGroup,
   CardHeader
 } from "reactstrap";
 import { GoogleLogin } from 'react-google-login';
@@ -28,20 +26,10 @@ const styles = {
   }
 }
 
-class LoginCliente extends Component {
+class LoginGoogle extends Component {
 
   constructor(props) {
     super(props);
-    this.loginGoogle = this.loginGoogle.bind(this);
-    this.logoutGoogle = this.logoutGoogle.bind(this);
-  }
-
-  loginGoogle(response) {
-    console.log(response);
-  }
-
-  logoutGoogle(response) {
-    console.log(response);
   }
 
   render() {
@@ -49,54 +37,84 @@ class LoginCliente extends Component {
       <div>
         <GoogleLogin
           clientId={CLIENT_ID}
-          buttonText="Comentar"
-          onSuccess={this.loginGoogle}
-          onFailure={this.loginGoogle}
+          buttonText={this.props.text}
+          onSuccess={this.props.onHandle}
           cookiePolicy={'single_host_origin'}
           isSignedIn={true}
+          disabled={this.props.disabled}
         />
       </div>
     )
   }
 }
 
-class FormComentario extends Component {
-  constructor(props){
+class NotaOuComentario extends Component {
+  constructor(props) {
     super(props);
     this.state = {
-      title: "",
-      msg: "",
-      username: "",
-      imageUrl: "",
-      email: ""
+      comment: {
+        title: "",
+        msg: "",
+        username: "",
+        imageUrl: "",
+        email: ""
+      },
+      note: {
+        email: "",
+        vote: 0
+      }
     };
     this.onNewComment = this.onNewComment.bind(this);
+    this.onNewVote = this.onNewVote.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  onNewComment(){
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+}
+
+  onNewVote(resp) {
+    console.log(resp);
+    console.log(this.state.note.vote);
+  }
+
+  onNewComment() {
 
   }
   
   render(){
     return (
-      <div>
+      <div className="mt-3">
         <h3>
           <span className="badge bg-danger">Comentário</span>
         </h3>
         <Card className="p-3">
-          <CardBody>
-            <FormGroup className="mt-3">
+          <div className="text-center">
+            <h5>O que você achou?</h5>
+            <div className="input-group">
+              <select onChange={this.handleChange} value={this.state.note.vote} name="note" className="form-control custom-select">
+                <option value={0}>Selecione:</option>
+                <option value={1}>👍</option>
+                <option value={2}>😐</option>
+                <option value={3}>👎</option>
+              </select>
+              <div className="input-group-append">
+                <LoginGoogle disabled={this.state.note.vote == 0} onHandle={this.onNewVote} text="Votar" />
+              </div>
+            </div>
+          </div>
+          <p className="text-center mt-2">ou</p>
+            <FormGroup>
               <Label>Título:</Label>
               <Input type="text" name="title" />
             </FormGroup>
-            <FormGroup className="mt-3">
+            <FormGroup>
               <Label>Mensagem:</Label>
               <Input type="text" name="email" />
             </FormGroup>
             <div className="mt-3 container row col text-center">
-              <LoginCliente />
+              <LoginGoogle text="Comentar" disabled={this.state.comment.title == "" && this.state.comment.msg == ""} onHandle={this.onNewComment} />
             </div>
-          </CardBody>
         </Card>
       </div>
     )
@@ -104,20 +122,6 @@ class FormComentario extends Component {
   
 }
 
-class Nota extends Component {
-  render(){
-    return (
-      <div className="text-center">
-        <h5>O que achou?</h5>
-        <ButtonGroup>
-          <Button className="bg-warning">Gostei</Button>
-          <Button className="bg-warning">Não sei</Button>
-          <Button className="bg-warning">Não gostei</Button>
-        </ButtonGroup>
-      </div>
-    )
-  } 
-}
 
 class ListaComentarios extends Component {
   constructor(props){
@@ -143,7 +147,7 @@ class ListaComentarios extends Component {
   render(){
     return (
       <div className="mt-3">
-        <h3 className="text-center">
+        <h3>
           <span className="badge bg-danger">Total de comentários: {this.state.countComments}</span>
         </h3>
         <ListGroup>
@@ -242,8 +246,7 @@ export default class Obra extends Component {
       <div className="container-fluid row d-flex justify-content-center">
         <div className="row col-sm-6">
           <ObraInfo />
-          <Nota />
-          <FormComentario />
+          <NotaOuComentario />
           <ListaComentarios />
         </div>
       </div>

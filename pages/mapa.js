@@ -1,6 +1,6 @@
 import { Component } from "react";
 
-export default class MapaObservatorio extends Component {
+export default class Mapa extends Component {
 
   constructor(props) {
     super(props);
