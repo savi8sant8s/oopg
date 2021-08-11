@@ -5,83 +5,61 @@ export default class ImportSheet extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      countConstructions: 0
+    }
     this.onReadSheet = this.onReadSheet.bind(this);
   }
 
   onReadSheet(event) {
     readXlsxFile(event.target.files[0]).then((rows) => {
-      rows = this.removeBlankRows(rows);
-      //rows = this.removeRowsWithDescription(rows);
-      //rows = this.transformBlankFieldToNull(rows);
-      //rows = this.transformArrayArrayToArrayObject(rows);
-      console.log(rows)
+      rows = rows.slice(1,rows.length+1);
+      rows = this.transformToArrayObject(rows);
+      this.setState({countConstructions: rows.length});
     });
   }
 
-  removeBlankRows(rows){
-    return rows.filter((row)=>{
-      if (row[0] != null){
-        return true;
-      }
-    });
-  }
-
-  transformBlankFieldToNull(rows){
-    let regex = new RegExp(/^[-]{4,}$/);
+  transformToArrayObject(rows){
+    let arrayObject = [];
     for(let x = 0; x < rows.length; x++){
-      for(let y = 0; y < rows[x].length; y++){
-        if (regex.test(rows[x][y])){
-          rows[x][y] = null;
-        }
+      arrayObject[x] = {
+        numeroLicitacao: rows[x][0],
+        descricao: rows[x][1], 
+        convenioNumeroAno: rows[x][2], 
+        convenioConcedente: rows[x][3],
+        convenioRepasse: rows[x][4], 
+        convenioContrapartida: rows[x][5], 
+        contratadoCpfCnpj: rows[x][6], 
+        contratadoRazaoSocial: rows[x][7], 
+        contratoNumeroAno: rows[x][8], 
+        contratoDataInico: rows[x][9], 
+        contratoPrazo: rows[x][10], 
+        contratoValorContratado: rows[x][11], 
+        contratoDataConclusao: rows[x][12], 
+        aditivoPrazoAditado: rows[x][13], 
+        aditivoValorAditado: rows[x][14], 
+        execucaoReajuste: rows[x][15],
+        execucaoNaturezaDespesa: rows[x][16], 
+        execucaoValorMedidoAcumulado: rows[x][17],
+        execucaoValorPagoAcumuladoPeriodo: rows[x][18], 
+        execucaoValorPagoAcumuladoExercicio: rows[x][19], 
+        valorPagoAcumuladoObra: rows[x][20],
+        situacao: rows[x][21],
+        categoria: rows[x][22]
       }
     }
-    return rows;
+    return arrayObject;
   }
-
-  transformArrayArrayToArrayObject(rows){
-    for(let x = 0; x < rows.length; x++){
-      rows[x] = {
-        numeroLicitacao: rows[x][0],                    
-        descricao: rows[x][1],                           
-        convenioNumeroAno: rows[x][2],                   
-        convenioConcedente: rows[x][3],                 
-        convenioRepasse: rows[x][4],                     
-        convenioContrapartida: rows[x][5],               
-        contratadoCpfCcnpj: rows[x][6],                  
-        contratadoRazaoSocial: rows[x][7],               
-        contratoNumeroAno: rows[x][8],                   
-        contratoDataInicio: rows[x][9],                  
-        contratoPrazo: rows[x][10],                       
-        contratoValorContratado: rows[x][11],             
-        contratoDataConclusaoOuParalizacao: rows[x][12],               
-        aditivoPrazoAditado: rows[x][13],                 
-        aditivoValorAditadoAcumulado: rows[x][14],        
-        execucaoReajuste: rows[x][15],                    
-        execucaoNaturezaDespesa: rows[x][16],             
-        execucaoValorMedidoAcumulado: rows[x][18],        
-        execucaoValorPagoAcumuladoPeriodo: rows[x][19],   
-        execucaoValorPagoAcumuladoExercicio: rows[x][20], 
-        valorPagoAcumulado: rows[x][21],
-        situacao: rows[x][22]         
-      };
-    }
-    return rows;          
-  }
-
-  removeRowsWithDescription(rows){
-    let regex = new RegExp(/^[0-9]{3}\/[0-9]{4}$/);
-    return rows.filter((row)=>{
-      if (regex.test(row[8])){
-        return true;
-      }
-    });
-  }
-
   render() {
     return (
       <div className="form-group">
-        <label>Selecione um arquivo</label>
+        <label>Selecione um arquivo:</label>
         <input id="file" accept=".xlsx" onChange={this.onReadSheet} type="file" className="form-control-file" />
+        {this.state.countConstructions != 0 ?
+          <p>{this.state.countConstructions} obras.</p>
+          :
+          <></>
+        }
       </div>
     )
   }

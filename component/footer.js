@@ -9,7 +9,7 @@ export default class Footer extends Component {
 
     render() {
         return (
-            <nav className={style.bg1 + " navbar navbar-expand-lg justify-content-center navbar-light fixed-bottom"}>                    
+            <nav className={style.bg1 + " navbar navbar-expand-lg justify-content-center navbar-light mt-3"}>                    
                 <a className="navbar-brand style: margin-right=1rem; text-white" href="#">Todos os direitos reservados.</a>                 
             </nav>
         )
