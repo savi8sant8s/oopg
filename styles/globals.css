@@ -6,13 +6,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/*MARGEM*/
-.margin-default{
-  margin-bottom: 2vw;
+/*Linha sobre nos*/
+.line {
+  border-top: 4px solid gray;
+  width: 98s%;
+  position: absolute;
+  margin-top: -3px;
 }
-.margin-bottom{
-  margin-bottom: 1rem !important;
 
+/*Desabilita efeito link*/
+.disabled-link{
+  cursor: default;       
+  text-decoration: none;
+  color: grey;
+}
+
+/*TEXT*/
+.text-justify{
+  text-align: justify;
 }
 
 /*Styles*/
