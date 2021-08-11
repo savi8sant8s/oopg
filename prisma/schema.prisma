@@ -27,6 +27,20 @@ model Sessao {
   adminId             Int
 }
 
+enum Situacao {
+  CONCLUIDO
+  ANDAMENTO
+  PARALIZADO
+}
+
+enum Categoria {
+  SAUDE
+  EDUCACAO
+  ASSISTENCIASOCIAL
+  ADMINISTRACAO
+  URBANISMO
+}
+
 model Obra {
   id                                  Int @id @default(autoincrement()) 
   dataCriacao                         DateTime @default(now())
@@ -54,7 +68,8 @@ model Obra {
   execucaoValorPagoAcumuladoPeriodo   Float?
   execucaoValorPagoAcumuladoExercicio Float?
   valorPagoAcumulado                  Float 
-  situacao                            String
+  situacao                            Situacao
+  categoria                           Categoria
 }
 
 model Comentario {

@@ -40,7 +40,7 @@ export default class Menu extends Component {
                             <a className="nav-link text-white" href="/">Início</a>
                         </li>
                         <li className="nav-item m-1">
-                            <a className="nav-link text-white" href="/">Notícias</a>
+                            <a className="nav-link text-white" href="/noticias">Notícias</a>
                         </li>
                         <li className="nav-item m-1">
                             <a className="nav-link text-white" href="/obras">Obras</a>

@@ -5,13 +5,13 @@ import moment from "moment";
 const prisma = new PrismaClient();
 
 export default async (req, res) => {
-    if (req.method == "GET") {
+    if (req.method == "GET" && req.query.id) {
         try {
+            let id = Number(req.query.id);
             let response = {};
             response.timestamp = moment().locale("pt-br").format();
-            response.codeStatus = CODE_STATUS.CONSTRUCTION.CONSTRUCTIONS_SUCCESS;
-            response.constructions = await prisma.obra.findMany({ select: { id: true, numeroLicitacao: true, descricao: true, categoria: true, contratoDataInicio: true } });
-            response.countConstructions = await prisma.obra.count();
+            response.codeStatus = CODE_STATUS.CONSTRUCTION.CONSTRUCTION_SUCCESS;
+            response.construction = await prisma.obra.findUnique({ where: {id: id}});
             res.status(200).json(response);
         } catch (error) {
             res.status(400).end(error);
@@ -20,4 +20,3 @@ export default async (req, res) => {
         res.status(400).end("Resource not found.");
     }
 };
-
