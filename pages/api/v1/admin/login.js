@@ -1,47 +1,47 @@
 import { PrismaClient } from "@prisma/client";
-import { validateBody } from "../../../../middleware/validation";
-import { CODE_STATUS } from "../../../../services/code-status";
-import { loginSchema } from "../../../../services/schemas";
+import { validar } from "../../../../middlewares/validacao";
+import { schema } from "../../../../services/schemas";
 import moment from "moment";
 import bcrypt from "bcrypt";
 import randtoken from 'rand-token';
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { respostaPadrao } from "../../../../middlewares/respostas-padrao";
 
 const prisma = new PrismaClient();
 
-export default validateBody(loginSchema, async (req, res) => {
+export default validar.corpo(schema.login, async (req, res) => {
   if (req.method == "POST") {
     try {
-      let response = {};
-      response.timestamp = moment().locale("pt-br").format();
+      let resposta = {};
+      resposta.timestamp = moment().locale("pt-br").format();
 
       let admin = await prisma.admin.findUnique({ where: { email: req.body.email } });
       if (!admin) {
-        response.codeStatus = CODE_STATUS.ADMIN.LOGIN_USER_NOT_EXISTS;
-        res.status(200).json(response);
+        resposta.status = CODIGO_STATUS.ADMIN.LOGIN_USUARIO_INEXISTENTE;
+        res.status(200).json(resposta);
       }
 
-      let passwordValid = await bcrypt.compare(req.body.password, admin.senha);
-      if (!passwordValid) {
-        response.codeStatus = CODE_STATUS.ADMIN.LOGIN_INVALID_CREDENTIALS;
-        res.status(200).json(response);
+      let senhaValida = await bcrypt.compare(req.body.senha, admin.senha);
+      if (!senhaValida) {
+        resposta.status = CODIGO_STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS;
+        res.status(200).json(resposta);
       }
 
-      response.token = randtoken.generate(30);
+      resposta.token = randtoken.generate(30);
 
-      let lastSession = await prisma.sessao.findFirst({ where: { adminId: admin.id, valido: true } });
-      if (lastSession) {
-        await prisma.sessao.updateMany({ where: { adminId: lastSession.adminId }, data: { valido: false, dataAtualizacao: response.timestamp } });
+      let ultimaSessao = await prisma.sessao.findFirst({ where: { adminId: admin.id, valido: true } });
+      if (ultimaSessao) {
+        await prisma.sessao.updateMany({ where: { adminId: ultimaSessao.adminId }, data: { valido: false, dataAtualizacao: resposta.timestamp } });
       }
-      await prisma.sessao.create({ data: { token: response.token, adminId: admin.id } });
+      await prisma.sessao.create({ data: { token: resposta.token, adminId: admin.id } });
 
-      response.codeStatus = CODE_STATUS.ADMIN.LOGIN_SUCCESS;
-      res.status(200).json(response);
-    } catch (error) {
-      res.status(400).end(error);
+      resposta.codeStatus = CODIGO_STATUS.ADMIN.LOGIN_SUCESSO;
+      res.status(200).json(resposta);
+    } catch (erro) {
+      respostaPadrao.erroInesperado(res, erro);
     }
-
   } else {
-    res.status(400).end("Resource not found.");
+    respostaPadrao.recursoNaoDisponivel(res);
   }
 });
 

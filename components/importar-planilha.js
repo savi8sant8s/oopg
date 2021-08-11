@@ -1,7 +1,7 @@
 import { Component } from "react";
 import readXlsxFile from 'read-excel-file'
 
-export default class ImportSheet extends Component {
+export default class ImportarPlanlha extends Component {
 
   constructor(props) {
     super(props);

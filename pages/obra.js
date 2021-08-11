@@ -9,7 +9,9 @@ import {
   ListGroupItem,
   Row,
   Col,
-  CardHeader
+  CardHeader,
+  ButtonGroup,
+  Button
 } from "reactstrap";
 import { GoogleLogin } from 'react-google-login';
 import axios from "axios";
@@ -173,6 +175,22 @@ function ObraInfo(props) {
   )
 }
 
+class QuantNotas extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <ButtonGroup size="sm">
+        <Button color="light">👍 {this.props.nota.gostou}</Button>
+        <Button color="light">😐 {this.props.nota.indiferente}</Button>
+        <Button color="light">👎 {this.props.nota.naogostou}</Button>
+      </ButtonGroup>
+    )
+  }
+}
+
 export default withRouter(class Obra extends Component {
 
   constructor(props) {
@@ -209,16 +227,25 @@ export default withRouter(class Obra extends Component {
       comentarios: {
         itens: [],
         quant: 0
-      }
+      },
+      notas: {
+        gostou: 0,
+        indiferente: 0,
+        naogostou: 0
+      },
+      obraId: null
     };
     this.getObra = this.getObra.bind(this);
+    this.getNotas = this.getNotas.bind(this);
     this.getComentarios = this.getComentarios.bind(this);
   }
 
   routeChangeComplete = () => {
     let id = this.props.router.query.id;
+    this.setState({obraId: id});
     this.getObra(id);
     this.getComentarios(id);
+    this.getNotas(id);
   }
 
   componentDidMount() {
@@ -226,20 +253,28 @@ export default withRouter(class Obra extends Component {
   }
 
 
-  async getComentarios() {
-    let id = await this.props.router.query.id;
+  async getComentarios(id) {
     let { data } = await axios.get(`/api/v1/public/comentarios?obraId=${id}`);
     let comentarios = {
-      itens: data.comments,
-      quant: data.countComments
+      itens: data.comentarios,
+      quant: data.quantComentarios
     }
     this.setState({ comentarios: comentarios });
   }
 
-  async getObra() {
-    let id = await this.props.router.query.id;
+  async getNotas(id) {
+    let { data } = await axios.get(`/api/v1/public/notas?obraId=${id}`);
+    let notas = {
+      gostou: data.gostou,
+      indiferente: data.indiferente,
+      naogostou: data.naogostou
+    }
+    this.setState({ notas: notas });
+  }
+  
+  async getObra(id) {
     let { data } = await axios.get(`/api/v1/public/obra?id=${id}`);
-    this.setState({ obra: data.construction });
+    this.setState({ obra: data.obra });
   }
 
   render() {
@@ -247,7 +282,8 @@ export default withRouter(class Obra extends Component {
       <div className="container-fluid row d-flex justify-content-center">
         <div className="row col-sm-8">
           <ObraInfo obra={this.state.obra} />
-          <NotaOuComentario />
+          <QuantNotas nota={this.state.notas} />
+          <NotaOuComentario obraId={this.state.obraId} />
           <Comentarios comentarios={this.state.comentarios} />
         </div>
       </div>

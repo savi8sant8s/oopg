@@ -1,29 +1,30 @@
 import { PrismaClient } from "@prisma/client";
-import { CODE_STATUS } from "../../../../services/code-status";
 import moment from "moment";
-import { validateBody, validateGoogleToken } from "../../../../middleware/validation";
-import { noteSchema } from "../../../../services/schemas";
+import { schema } from "../../../../services/schemas";
+import { validar } from "../../../../middlewares/validacao";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { respostaPadrao } from "../../../../middlewares/respostas-padrao";
 
 const prisma = new PrismaClient();
 
-export default validateBody(noteSchema, validateGoogleToken(async (req, res) => {
+export default validar.corpo(schema.nota, validar.tokenGoogle(async (req, res) => {
     if (req.method == "POST" && req.query.obraId) {
         try {
-            let response = {};
-            response.timestamp = moment().locale("pt-br").format();
-            let noteAlreadyexists = await prisma.nota.findUnique({ where: { email: req.body.email } });
-            if (noteAlreadyexists) {
-                response.codeStatus = CODE_STATUS.CONSTRUCTION_NOTE_ALREADY_EXISTS;
+            let resposta = {};
+            resposta.timestamp = moment().locale("pt-br").format();
+            let jaVotou = await prisma.nota.findUnique({ where: { email: req.body.email } });
+            if (jaVotou) {
+                resposta.status = CODIGO_STATUS.OBRA.NOTA_JA_EXISTE;
             }
             else {
-                await prisma.nota.create({ data: { email: req.body.email, nota: Number(req.body.note), obraId: Number(req.query.obraId) } });
-                response.codeStatus = CODE_STATUS.CONSTRUCTION_NOTE_ADDED_SUCCESS;
+                await prisma.nota.create({ data: { email: req.body.email, nota: Number(req.body.nota), obraId: Number(req.query.obraId) } });
+                resposta.status = CODIGO_STATUS.OBRA.NOTA_CRIADA_SUCESSO;
             }
-            res.status(200).json(response);
-        } catch (error) {
-            res.status(400).end(error);
+            res.status(200).json(resposta);
+        } catch (erro) {
+            respostaPadrao.erroInesperado(res, erro);
         }
-    } else{
-        res.status(400).end("Resource not found.");
+    } else {
+        respostaPadrao.recursoNaoDisponivel(res);
     }
 }));

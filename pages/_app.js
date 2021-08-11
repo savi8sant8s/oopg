@@ -1,8 +1,8 @@
 import '../styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Head from "next/head";
-import Footer from '../component/footer';
-import Menu from '../component/menu';
+import Footer from '../components/footer';
+import Menu from '../components/menu';
 
 export default function OOPG({ Component, pageProps }) {
   return (

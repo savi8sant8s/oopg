@@ -5,7 +5,7 @@ import { ListGroup, ListGroupItem } from "reactstrap";
 import axios from "axios";
 
 const styles = {
-  list: {
+  obras: {
     border:"2px",
     marginTop:"3rem", 
     overflow: "auto", 
@@ -20,25 +20,25 @@ class ListaObras extends Component {
   constructor(props){
     super(props);
     this.state = {
-      constructions: [],
-      countConstructions: 0
+      obras: [],
+      quantObras: 0
     }
   }
 
   componentDidMount(){
     axios.get("/api/v1/public/obras").then((res)=>{
       let { data } = res;
-      this.setState({countConstructions: data.countConstructions});
-      this.setState({constructions: data.constructions});
+      this.setState({quantObras: data.quantObras});
+      this.setState({obras: data.obras});
     })
   }
 
   render(){
     return (
-      <div style={styles.list}> 
-      {this.state.countConstructions > 0 ? <h3>{this.state.countConstructions} obras</h3> : <></> }  
+      <div style={styles.obras}> 
+      {this.state.quantObras > 0 ? <h3>{this.state.quantObras} obras</h3> : <></> }  
       <ListGroup>
-        {this.state.constructions.map((obra, x) =>
+        {this.state.obras.map((obra, x) =>
         <ListGroupItem key={x} tag="a" href={`/obra?id=${obra.id}`}>{obra.descricao.slice(0,70) + "..."}</ListGroupItem>
         )}
       </ListGroup>

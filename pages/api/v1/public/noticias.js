@@ -1,26 +1,27 @@
 import { PrismaClient } from "@prisma/client";
-import { CODE_STATUS } from "../../../../services/code-status";
 import moment from "moment";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { respostaPadrao } from "../../../../middlewares/respostas-padrao";
 
 const prisma = new PrismaClient();
 
 export default async (req, res) => {
     if (req.method == "GET") {
         try {
-            let response = {};
-            response.timestamp = moment().locale("pt-br").format();
-            response.codeStatus = CODE_STATUS.ALL_NEWS_SUCCESS;
+            let resposta = {};
+            resposta.timestamp = moment().locale("pt-br").format();
+            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIAS_SUCESSO;
             if (req.query.quant) {
-                response.news = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' }, take: Number(req.query.quant) });
+                resposta.noticias = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' }, take: Number(req.query.quant) });
             }
             else {
-                response.news = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' } });
+                resposta.noticias = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' } });
             }
-            res.status(200).json(response);
-        } catch (error) {
-            res.status(400).end(error);
+            res.status(200).json(resposta);
+        } catch (erro) {
+            respostaPadrao.erroInesperado(res, erro);
         }
     } else {
-        res.status(400).end("Resource not found.");
+        respostaPadrao.recursoNaoDisponivel(res);
     }
 };

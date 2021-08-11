@@ -1,23 +1,24 @@
 import { PrismaClient } from "@prisma/client";
-import { CODE_STATUS } from "../../../../services/code-status";
 import moment from "moment";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { respostaPadrao } from "../../../../middlewares/respostas-padrao";
 
 const prisma = new PrismaClient();
 
 export default async (req, res) => {
     if (req.method == "GET") {
         try {
-            let response = {};
-            response.timestamp = moment().locale("pt-br").format();
-            response.codeStatus = CODE_STATUS.CONSTRUCTION.CONSTRUCTIONS_SUCCESS;
-            response.constructions = await prisma.obra.findMany({ select: { id: true, numeroLicitacao: true, descricao: true, categoria: true, contratoDataInicio: true } });
-            response.countConstructions = await prisma.obra.count();
-            res.status(200).json(response);
-        } catch (error) {
-            res.status(400).end(error);
+            let resposta = {};
+            resposta.timestamp = moment().locale("pt-br").format();
+            resposta.status = CODIGO_STATUS.OBRA.OBRAS_SUCESSO;
+            resposta.obras = await prisma.obra.findMany({ select: { id: true, numeroLicitacao: true, descricao: true, categoria: true, contratoDataInicio: true } });
+            resposta.quantObras = await prisma.obra.count();
+            res.status(200).json(resposta);
+        } catch (erro) {
+            respostaPadrao.erroInesperado(res, erro);
         }
     } else {
-        res.status(400).end("Resource not found.");
+        respostaPadrao.recursoNaoDisponivel(res);
     }
 };
 
