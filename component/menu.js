@@ -2,6 +2,7 @@ import { Component } from "react";
 import { VscLock } from "react-icons/vsc";
 import { HiMenu } from "react-icons/hi";
 
+
 const styles = {
     navBg: {
         backgroundColor: "#ff2b32c4"

@@ -1,8 +1,5 @@
 import { Component } from "react";
-import {
-    Container, Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button
-} from 'reactstrap';
+import {Card, CardImg, CardBody, CardTitle, Button} from 'reactstrap';
 
 const styles = {
     list: {
