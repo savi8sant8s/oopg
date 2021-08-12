@@ -1,0 +1,14 @@
+/*Linha sobre nos*/
+.line {
+    border-top: 4px solid gray;
+    width: 98%;
+    position: absolute;
+    margin-top: -3px;
+  }
+  
+  /*Desabilita efeito link*/
+  .disableLink{
+    cursor: default;       
+    text-decoration: none;
+    color: grey;
+  }
