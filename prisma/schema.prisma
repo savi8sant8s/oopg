@@ -79,7 +79,7 @@ model Comentario {
   titulo              String
   mensagem            String
   nomeUsuario         String
-  email               String @unique
+  email               String
   imagemUrl           String
   obra                Obra @relation(fields: [obraId], references: [id])
   obraId              Int
@@ -90,7 +90,7 @@ model Nota {
   dataCriacao         DateTime @default(now())
   dataAtualizacao     DateTime?
   nota                Int
-  email               String @unique
+  email               String
   obra                Obra @relation(fields: [obraId], references: [id])
   obraId              Int
 }

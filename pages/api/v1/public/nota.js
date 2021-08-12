@@ -12,7 +12,7 @@ export default validar.corpo(schema.nota, validar.tokenGoogle(async (req, res) =
         try {
             let resposta = {};
             resposta.timestamp = moment().locale("pt-br").format();
-            let jaVotou = await prisma.nota.findUnique({ where: { email: req.body.email } });
+            let jaVotou = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: Number(req.query.obraId)}});
             if (jaVotou) {
                 resposta.status = CODIGO_STATUS.OBRA.NOTA_JA_EXISTE;
             }
