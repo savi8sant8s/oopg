@@ -1,7 +1,7 @@
-import React, { Component, useState } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
-import ImportSheet from '../../component/import-sheet';
+import React, { Component } from 'react';
+import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import {DiAndroid} from "react-icons/di"
+import ImportarPlanilha from "../../components/importar-planilha";
 
 function ObrasListar() {
   return (
@@ -14,7 +14,7 @@ function ObrasListar() {
 function ObrasCadastrar() {
   return (
     <div>
-      <ImportSheet />
+      <ImportarPlanilha />
     </div>
   )
 }
