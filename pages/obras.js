@@ -39,7 +39,7 @@ class ListaObras extends Component {
       {this.state.quantObras > 0 ? <h3>{this.state.quantObras} obras</h3> : <></> }  
       <ListGroup>
         {this.state.obras.map((obra, x) =>
-        <ListGroupItem key={x} tag="a" href={`/obra?id=${obra.id}`}>{obra.descricao.slice(0,70) + "..."}</ListGroupItem>
+        <ListGroupItem key={x} tag="a" href={`/obra/${obra.id}`}>{obra.descricao.slice(0,70) + "..."}</ListGroupItem>
         )}
       </ListGroup>
       </div>
