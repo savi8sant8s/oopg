@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import moment from "moment";
 import { CODIGO_STATUS } from "../../../../services/codigo-status";
-import { respostaPadrao } from "../../../../middlewares/respostas-padrao";
+
 
 const prisma = new PrismaClient();
 
@@ -16,9 +16,9 @@ export default async (req, res) => {
             resposta.naogostou = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 3 } });
             res.status(200).json(resposta);
         } catch (erro) {
-            respostaPadrao.erroInesperado(res, erro);
+            res.status(400).end(erro);;
         }
     } else {
-        respostaPadrao.recursoNaoDisponivel(res);
+        res.status(400).end("Recurso não encontrado.");
     }
 };

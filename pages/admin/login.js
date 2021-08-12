@@ -66,6 +66,9 @@ export default class AdminLogin extends Component {
                     case CODIGO_STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS:
                         mostrarAlerta('Credenciais inválidas', 'Verifique o preenchimento do formulário.');
                         break;
+                    case CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS:
+                        mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
+                        break;
                     default:
                         mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
                 }
