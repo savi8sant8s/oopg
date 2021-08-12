@@ -1,5 +1,4 @@
 import { Component } from "react";
-import ImportSheet from "../../component/import-sheet";
 
 export default class Home extends Component {
 
@@ -10,7 +9,6 @@ export default class Home extends Component {
   render() {
     return (
       <div>
-        <ImportSheet />
       </div>
     )
   }

@@ -1,36 +1,33 @@
 import { PrismaClient } from "@prisma/client";
-import { CODE_STATUS } from "../../../../services/code-status";
 import moment from "moment";
-import { validateBody, validateGoogleToken } from "../../../../middleware/validation";
-import { commentSchema } from "../../../../services/schemas";
+import { schema } from "../../../../services/schemas";
+import { validar } from "../../../../middlewares/validacao";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+
 
 const prisma = new PrismaClient();
 
-export default validateBody(commentSchema, validateGoogleToken(async (req, res) => {
+export default validar.corpo(schema.comentario, validar.tokenGoogle(async (req, res) => {
     if (req.method == "POST" && req.query.obraId) {
         try {
-            let response = {};
-            response.timestamp = moment().locale("pt-br").format();
-            let commentAlreadyexists = await prisma.comentario.findUnique({ where: { email: req.body.email } });
-            if (commentAlreadyexists) {
-                response.codeStatus = CODE_STATUS.CONSTRUCTION_COMMENT_ALREADY_EXISTS;
-            }
-            else {
-                await prisma.comentario.create({ data: { 
-                    imagemUrl: req.body.imageUrl,
-                    nomeUsuario: req.body.username,
-                    titulo: req.body.title,
-                    mensagem: req.body.msg,
-                    email: req.body.email, 
-                    obraId: Number(req.query.obraId) 
-                }});
-                response.codeStatus = CODE_STATUS.CONSTRUCTION_COMMENT_ADDED_SUCCESS;
-            }
-            res.status(200).json(response);
-        } catch (error) {
-            res.status(400).end(error);
+            let resposta = {};
+            resposta.timestamp = moment().locale("pt-br").format();
+            await prisma.comentario.create({
+                data: {
+                    imagemUrl: req.body.imagemUrl,
+                    nomeUsuario: req.body.nomeUsuario,
+                    titulo: req.body.titulo,
+                    mensagem: req.body.mensagem,
+                    email: req.body.email,
+                    obraId: Number(req.query.obraId)
+                }
+            });
+            resposta.status = CODIGO_STATUS.OBRA.COMENTARIO_CRIADO_SUCESSO;
+            res.status(200).json(resposta);
+        } catch (erro) {
+            res.status(400).end(erro);;
         }
-    } else{
-        res.status(400).end("Resource not found.");
+    } else {
+        res.status(400).end("Recurso não encontrado.");
     }
 }));

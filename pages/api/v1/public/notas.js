@@ -1,23 +1,24 @@
 import { PrismaClient } from "@prisma/client";
-import { CODE_STATUS } from "../../../../services/code-status";
 import moment from "moment";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+
 
 const prisma = new PrismaClient();
 
 export default async (req, res) => {
     if (req.method == "GET" && req.query.obraId) {
         try {
-            let response = {};
-            response.timestamp = moment().locale("pt-br").format();
-            response.codeStatus = CODE_STATUS.ALL_CONSTRUCTION_NOTES_SUCCESS;
-            response.like = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 3 } });
-            response.indifferent = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 2 } });
-            response.dislike = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 1 } });
-            res.status(200).json(response);
-        } catch (error) {
-            res.status(400).end(error);
+            let resposta = {};
+            resposta.timestamp = moment().locale("pt-br").format();
+            resposta.status = CODIGO_STATUS.OBRA.NOTAS_OBRA_SUCESSO;
+            resposta.gostou = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 1 } });
+            resposta.indiferente = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 2 } });
+            resposta.naogostou = await prisma.nota.count({ where: { obraId: Number(req.query.obraId), nota: 3 } });
+            res.status(200).json(resposta);
+        } catch (erro) {
+            res.status(400).end(erro);;
         }
-    } else{
-        res.status(400).end("Resource not found.");
+    } else {
+        res.status(400).end("Recurso não encontrado.");
     }
 };
