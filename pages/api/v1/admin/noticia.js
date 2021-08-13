@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { CODIGO_STATUS } from "../../../../services/codigo-status";
 import moment from "moment";
 import { validar } from "../../../../middlewares/validacao";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { schema } from "../../../../services/schemas";
 
 const prisma = new PrismaClient();
 
@@ -9,8 +10,8 @@ export default validar.tokenAdmin(
     async (req, res) => {
         try {
             switch (req.method) {
-                case "PUT":
-                    await logout(req, res);
+                case "POST":
+                    await adicionarNoticia(req, res);
                     break;
                 default:
                     throw "Recurso não encontrado.";
@@ -22,13 +23,15 @@ export default validar.tokenAdmin(
                 erro: erro
             });
         }
-    });
 
-const logout = async (req, res) => {
-    let token = req.headers.authorization.split(' ')[1];
-    await prisma.sessao.update({ where: { token: token }, data: { valido: false, dataAtualizacao: moment().format() } });
+    }
+);
+
+const adicionarNoticia = (validar.corpo(schema.noticia, async (req, res) => {
+    let corpo = req.body;
+    await prisma.noticia.create({ data: corpo });
     res.status(200).json({
         timestamp: moment().format(),
-        status: CODIGO_STATUS.ADMIN.LOGOUT_SUCESSO
+        status: CODIGO_STATUS.NOTICIA.NOTICIA_CRIADA_SUCESSO
     });
-};
+}));

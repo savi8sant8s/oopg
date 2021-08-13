@@ -6,22 +6,32 @@ import { CODIGO_STATUS } from "../../../../services/codigo-status";
 const prisma = new PrismaClient();
 
 export default async (req, res) => {
-    if (req.method == "GET") {
-        try {
-            let resposta = {};
-            resposta.timestamp = moment().locale("pt-br").format();
-            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIAS_SUCESSO;
-            if (req.query.quant) {
-                resposta.noticias = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' }, take: Number(req.query.quant) });
-            }
-            else {
-                resposta.noticias = await prisma.noticia.findMany({ orderBy: { dataCriacao: 'asc' } });
-            }
-            res.status(200).json(resposta);
-        } catch (erro) {
-            res.status(400).end(erro);;
+    try {
+        switch (req.method) {
+            case "GET":
+                await listarNoticias(req, res);
+                break;
+            default:
+                throw "Recurso não encontrado.";
         }
-    } else {
-        res.status(400).end("Recurso não encontrado.");
+    } catch (erro) {
+        res.status(400).json({
+            timestamp: moment().format(),
+            status: CODIGO_STATUS.ERRO.PROBLEMA_INESPERADO,
+            erro: erro
+        });
     }
+
+};
+
+const listarNoticias = async (req, res) => {
+    let resposta = {};
+    let consulta = { orderBy: { dataCriacao: 'asc' } };
+    if (req.query.quant) {
+        consulta.take = Number(req.query.quant);
+    }
+    resposta.noticias = await prisma.noticia.findMany(consulta);
+    resposta.timestamp = moment().format();
+    resposta.status = CODIGO_STATUS.NOTICIA.NOTICIAS_SUCESSO;
+    res.status(200).json(resposta);
 };

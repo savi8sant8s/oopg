@@ -16,16 +16,18 @@ export const validar = {
         try {
             await schema.validate(req.body);
             handler(req, res);
-        } catch (e) {
+        } catch (erro) {
             res.status(400).json({
                 timestamp: timestamp,
-                status: CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS
+                status: CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS,
+                erro: erro
             });
         }
     },
     tokenAdmin: (handler) => async (req, res) => {
-        let openSession = await prisma.sessao.findFirst({ where: { token: req.body.token, valido: true } });
-        if (openSession) {
+        let token = req.headers.authorization.split(' ')[1];
+        let sessaoAberta = await prisma.sessao.findFirst({ where: { token: token, valido: true } });
+        if (sessaoAberta) {
             handler(req, res);
         } else {
             res.status(400).json({
@@ -35,7 +37,8 @@ export const validar = {
         }
     },
     tokenGoogle: (handler) => async (req, res) => {
-        client.verifyIdToken({ idToken: req.body.token, audience: CLIENT_ID })
+        let token = req.headers.authorization.split(' ')[1];
+        client.verifyIdToken({ idToken: token, audience: CLIENT_ID })
             .then(() => {
                 handler(req, res);
             }).catch(() => {
