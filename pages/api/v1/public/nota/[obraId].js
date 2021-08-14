@@ -21,7 +21,7 @@ export default capturarExcecoes(
 
 const adicionarNota = async (req, res) => {
   let resposta = {};
-  resposta.timestamp = moment().locale("pt-br").format();
+  resposta.timestamp = moment().format();
   let jaVotou = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: Number(req.query.obraId) } });
   if (jaVotou) {
     resposta.status = CODIGO_STATUS.OBRA.NOTA_JA_EXISTE;

@@ -97,11 +97,13 @@ class Interacao extends Component {
     onVotar(resposta) {
         let corpo = {
             nota: this.state.nota,
-            email: resposta.profileObj.email,
-            token: resposta.tokenId
+            email: resposta.profileObj.email
+        };
+        let headers = { 
+            headers: {Authorization: `Bearer ${resposta.tokenId}`}
         };
         schema.nota.validate(corpo).then(() => {
-            axios.post(`/api/v1/public/nota?obraId=${this.props.id}`, corpo).then((res) => {
+            axios.post(`/api/v1/public/nota/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
                     case CODIGO_STATUS.OBRA.NOTA_CRIADA_SUCESSO:
@@ -136,11 +138,13 @@ class Interacao extends Component {
             mensagem: this.state.mensagem,
             nomeUsuario: resposta.profileObj.name,
             imagemUrl: resposta.profileObj.imageUrl,
-            email: resposta.profileObj.email,
-            token: resposta.tokenId
+            email: resposta.profileObj.email
+        };
+        let headers = { 
+            headers: {Authorization: `Bearer ${resposta.tokenId}`}
         };
         schema.comentario.validate(corpo).then(() => {
-            axios.post(`/api/v1/public/comentario?obraId=${this.props.id}`, corpo).then((res) => {
+            axios.post(`/api/v1/public/comentario/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
                     case CODIGO_STATUS.OBRA.COMENTARIO_CRIADO_SUCESSO:
@@ -223,7 +227,7 @@ class Comentarios extends Component {
     }
 
     async onPegarComentarios() {
-        let { data } = await axios.get(`/api/v1/public/comentarios?obraId=${this.props.id}`);
+        let { data } = await axios.get(`/api/v1/public/comentarios/${this.props.obraId}`);
         let comentarios = {
             itens: data.comentarios,
             quant: data.quantComentarios
@@ -300,7 +304,7 @@ class Informacoes extends Component {
     }
 
     async onPegarInformacoes() {
-        let { data } = await axios.get(`/api/v1/public/obra?id=${this.props.id}`);
+        let { data } = await axios.get(`/api/v1/public/obra/${this.props.obraId}`);
         this.setState({ obra: data.obra });
     }
 
@@ -399,7 +403,7 @@ class Notas extends Component {
     }
 
     async onPegarNotas() {
-        let { data } = await axios.get(`/api/v1/public/notas?obraId=${this.props.id}`);
+        let { data } = await axios.get(`/api/v1/public/notas/${this.props.obraId}`);
         let notas = {
             gostou: data.gostou,
             indiferente: data.indiferente,
@@ -433,10 +437,10 @@ export default class Obra extends Component {
         return (
             <div className="container-fluid row d-flex justify-content-center">
                 <div className="row col-sm-8">
-                    <Informacoes id={this.props.query.id} />
-                    <Notas id={this.props.query.id} />
-                    <Interacao id={this.props.query.id} />
-                    <Comentarios id={this.props.query.id} />
+                    <Informacoes obraId={this.props.query.obraId} />
+                    <Notas obraId={this.props.query.obraId} />
+                    <Interacao obraId={this.props.query.obraId} />
+                    <Comentarios obraId={this.props.query.obraId} />
                 </div>
             </div>
         )
