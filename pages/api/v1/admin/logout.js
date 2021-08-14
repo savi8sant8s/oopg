@@ -1,28 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { capturarExcecoes, mensagemErroPadrao, validar } from "../../../../middlewares/validacao";
 import moment from "moment";
-import { validar } from "../../../../middlewares/validacao";
 
 const prisma = new PrismaClient();
 
-export default validar.tokenAdmin(
+export default capturarExcecoes(
     async (req, res) => {
-        try {
-            switch (req.method) {
-                case "PUT":
-                    await logout(req, res);
-                    break;
-                default:
-                    throw "Recurso não encontrado.";
-            }
-        } catch (erro) {
-            res.status(400).json({
-                timestamp: moment().format(),
-                status: CODIGO_STATUS.ERRO.PROBLEMA_INESPERADO,
-                erro: erro
-            });
+        if (req.method == "POST") {
+            await validar.tokenAdmin(req, res);
+            await logout(req, res);
         }
-    });
+        else {
+            throw mensagemErroPadrao;
+        }
+    }
+);
 
 const logout = async (req, res) => {
     let token = req.headers.authorization.split(' ')[1];

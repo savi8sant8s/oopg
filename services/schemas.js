@@ -1,5 +1,8 @@
 import * as yup from 'yup';
 
+/**
+ * Esquemas de corpo aceitos pela API e formulários das páginas.
+ */
 export const schema = {
   login: yup.object({
     email: yup.string().email().required(),
@@ -23,3 +26,4 @@ export const schema = {
     imagemUrl: yup.string().url().min(10).max(100).required()
   }),
 };
+

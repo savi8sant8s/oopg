@@ -1,3 +1,6 @@
+/**
+ * Verifica se todos os campos do formulário estão preenchidos.
+ */
 export default function formVazio(form) {
     for (let campo in form) {
         if (form[campo] == "" ||
