@@ -1,27 +1,26 @@
 import { PrismaClient } from "@prisma/client";
 import { CODIGO_STATUS } from "../../../../services/codigo-status";
-import { capturarExcecoes, mensagemErroPadrao, validar } from "../../../../middlewares/validacao";
+import { Validacao } from "../../../../middlewares/validacao";
 import moment from "moment";
+import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
 
 const prisma = new PrismaClient();
 
 export default capturarExcecoes(
     async (req, res) => {
-        if (req.method == "POST") {
-            await validar.tokenAdmin(req, res);
-            await logout(req, res);
-        }
-        else {
-            throw mensagemErroPadrao;
-        }
+        let validar = new Validacao(req, res);
+
+        validar.metodo(["POST"]);
+        await validar.tokenAdmin();
+
+        let resposta = {};
+        resposta.dataHora = moment().format();
+
+        let token = req.headers.authorization.split(' ')[1];
+        await prisma.sessao.update({ where: { token: token }, data: { valido: false, dataAtualizacao: moment().format() } });
+        resposta.status = CODIGO_STATUS.ADMIN.LOGOUT_SUCESSO;
+
+        res.status(200).json(resposta);
     }
 );
 
-const logout = async (req, res) => {
-    let token = req.headers.authorization.split(' ')[1];
-    await prisma.sessao.update({ where: { token: token }, data: { valido: false, dataAtualizacao: moment().format() } });
-    res.status(200).json({
-        timestamp: moment().format(),
-        status: CODIGO_STATUS.ADMIN.LOGOUT_SUCESSO
-    });
-};

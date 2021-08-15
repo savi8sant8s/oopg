@@ -1,27 +1,26 @@
 import { PrismaClient } from "@prisma/client";
-import { capturarExcecoes, mensagemErroPadrao, validar } from "../../../../middlewares/validacao";
+import { Validacao } from "../../../../middlewares/validacao";
 import { CODIGO_STATUS } from "../../../../services/codigo-status";
 import { schema } from "../../../../services/schemas";
 import moment from "moment";
+import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
 
 const prisma = new PrismaClient();
 
 export default capturarExcecoes(
     async (req, res) => {
-        if (req.method == "POST") {
-            await validar.tokenAdmin(req, res);
-            await validar.corpo(schema.noticia, req, res);
-            await adicionarNoticia(req, res);
-        } else {
-            throw mensagemErroPadrao;
-        }
+        let validar = new Validacao(req, res);
+
+        validar.metodo(["POST"]);
+        await validar.tokenAdmin();
+        await validar.corpo(schema.noticia);
+
+        let resposta = {};
+        resposta.dataHora = moment().format();
+
+        await prisma.noticia.create({ data: req.body });
+        resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_CRIADA_SUCESSO;
+
+        res.status(200).json(resposta);
     }
 );
-
-const adicionarNoticia = async (req, res) => {
-    await prisma.noticia.create({ data: req.body });
-    res.status(200).json({
-        timestamp: moment().format(),
-        status: CODIGO_STATUS.NOTICIA.NOTICIA_CRIADA_SUCESSO
-    });
-};

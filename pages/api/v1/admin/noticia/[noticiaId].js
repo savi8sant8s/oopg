@@ -1,42 +1,36 @@
 import { PrismaClient } from "@prisma/client";
-import { capturarExcecoes, mensagemErroPadrao, validar } from "../../../../../middlewares/validacao";
+import { Validacao } from "../../../../../middlewares/validacao";
 import { CODIGO_STATUS } from "../../../../../services/codigo-status";
 import { schema } from "../../../../../services/schemas";
 import moment from "moment";
+import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
 
 const prisma = new PrismaClient();
 
 export default capturarExcecoes(
     async (req, res) => {
+        let validar = new Validacao(req, res);
+
+        validar.metodo(["PUT", "DELETE"]);
+        await validar.tokenAdmin();
+        await validar.noticiaExiste();
+
+        let resposta = {};
+        resposta.dataHora = moment().format();
+
+        let noticiaId = Number(req.query.noticiaId);
+
         if (req.method == "PUT") {
-            await validar.noticiaExiste(req, res);
-            await validar.tokenAdmin(req, res);
-            await validar.corpo(schema.noticia, req, res);
-            await alterarNoticia(req, res);
-        } else if (req.method == "DELETE") {
-            await validar.noticiaExiste(req, res);
-            await validar.tokenAdmin(req, res);
-            await deletarNoticia(req, res);
-        } else {
-            throw mensagemErroPadrao;
+            await validar.corpo(schema.noticia);
+            req.body.dataAtualizacao = moment().format();
+            await prisma.noticia.update({ data: req.body, where: { id: noticiaId } });
+            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_ALTERADA_SUCESSO;
         }
+        else if (req.method == "DELETE") {
+            await prisma.noticia.delete({ where: { id: noticiaId } });
+            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_DELETADA_SUCESSO;
+        }
+
+        res.status(200).json(resposta);
     }
 );
-
-const alterarNoticia = async (req, res) => {
-    let corpo = req.body;
-    corpo.dataAtualizacao = moment().format();
-    await prisma.noticia.update({ data: corpo, where: { id: Number(req.query.noticiaId) } });
-    res.status(200).json({
-        timestamp: moment().format(),
-        status: CODIGO_STATUS.NOTICIA.NOTICIA_ALTERADA_SUCESSO
-    });
-};
-
-const deletarNoticia = async (req, res) => {
-    await prisma.noticia.delete({ where: { id: Number(req.query.noticiaId) } });
-    res.status(200).json({
-        timestamp: moment().format(),
-        status: CODIGO_STATUS.NOTICIA.NOTICIA_DELETADA_SUCESSO
-    });
-};
