@@ -56,10 +56,10 @@ model Obra {
   contratadoCpfCcnpj                  String
   contratadoRazaoSocial               String
   contratoNumeroAno                   String
-  contratoDataInicio                  String
-  contratoPrazo                       String
+  contratoDataInicio                  DateTime
+  contratoPrazo                       DateTime
   contratoValorContratado             Float
-  contratoDataConclusao               String?
+  contratoDataConclusao               DateTime?
   aditivoPrazoAditado                 String?
   aditivoValorAditado                 String?
   execucaoReajuste                    Float?
