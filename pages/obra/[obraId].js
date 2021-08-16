@@ -20,6 +20,7 @@ import { schema } from "../../services/schemas";
 import { CODIGO_STATUS } from "../../services/codigo-status";
 import mostrarAlerta from "../../services/alerta-padrao";
 import formVazio from "../../services/form-vazio";
+import Swal from "sweetalert2";
 
 class LoginGoogle extends Component {
 
@@ -403,7 +404,9 @@ class Notas extends Component {
     }
 
     async onPegarNotas() {
+        Swal.showLoading();
         let { data } = await axios.get(`/api/v1/public/notas/${this.props.obraId}`);
+        Swal.close();
         let notas = {
             gostou: data.gostou,
             indiferente: data.indiferente,
