@@ -127,6 +127,18 @@ export class Validacao {
             }
         }
     }
+    /**
+     * Middleware que verifica se o valor informado é um número.
+     */
+    quantidadeValida(){
+        let quantidade = Number(this.req.query.quantidade);
+        if(isNaN(quantidade)){
+            throw{
+                status: CODIGO_STATUS.OBRA.QUANTIDADE_INVALIDA,
+                erro: `O valor informado ${quantidade} não é válido.`
+            }
+        }
+    }
 
     /**
      * Middleware para verificar se método HTTP especificado é o correto.

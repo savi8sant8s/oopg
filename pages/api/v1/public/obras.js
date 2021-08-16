@@ -14,7 +14,7 @@ export default capturarExcecoes(
 
         let resposta = {};
         resposta.dataHora = moment().format();
-        resposta.obras = await prisma.obra.findMany({
+        let consulta = {
             select: {
                 id: true,
                 numeroLicitacao: true,
@@ -22,8 +22,31 @@ export default capturarExcecoes(
                 categoria: true,
                 contratoDataInicio: true
             }
-        });
-        resposta.quantObras = await prisma.obra.count();
+        };
+        if(req.query.quantidade){
+            validar.quantidadeValida();
+            let quantidade = Number(req.query.quantidade);
+            consulta.take = quantidade;
+        }
+        if(req.query.ordenar){
+            validar.tipoOrdemExiste();
+            let ordenar = req.query.ordenar.toUpperCase();
+            let ordem = {
+                "RECENTE" : "desc",
+                "ANTIGO" : "asc"
+            }[ordenar];
+            consulta.orderBy = {contratoDataInicio: ordem};
+        }
+        if(req.query.categoria){
+            validar.categoriaExiste();
+            let categoria = req.query.categoria.toUpperCase();
+            consulta.where = {
+                categoria: categoria
+            };
+        }
+        resposta.obras = await prisma.obra.findMany(consulta);
+        delete consulta.select;
+        resposta.quantObras = await prisma.obra.count(consulta);
         resposta.status = CODIGO_STATUS.OBRA.OBRAS_SUCESSO;
 
         res.status(200).json(resposta);
