@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-slideshow-image/dist/styles.css';
 import Head from "next/head";
 import Footer from '../components/footer';
 import Menu from '../components/menu';
