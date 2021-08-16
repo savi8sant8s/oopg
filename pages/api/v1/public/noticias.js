@@ -15,7 +15,7 @@ export default capturarExcecoes(
         let resposta = {};
         resposta.dataHora = moment().format();
 
-        let consulta = { orderBy: { dataCriacao: 'asc' } };
+        let consulta = { orderBy: { dataCriacao: 'desc' } };
         if (req.query.quant) {
             consulta.take = Number(req.query.quant);
         }
