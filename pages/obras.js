@@ -3,6 +3,7 @@ import { CardBody, Card, CardTitle, CardHeader } from "reactstrap";
 import { FormGroup, Label, Col, Input } from "reactstrap";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const styles = {
   obras: {
@@ -25,12 +26,13 @@ class ListaObras extends Component {
     }
   }
 
-  componentDidMount(){
-    axios.get("/api/v1/public/obras").then((res)=>{
-      let { data } = res;
-      this.setState({quantObras: data.quantObras});
-      this.setState({obras: data.obras});
-    })
+  async componentDidMount() {
+    Swal.showLoading();
+    let res = await axios.get("/api/v1/public/obras")
+    Swal.close();
+    let { data } = res;
+    this.setState({ quantObras: data.quantObras });
+    this.setState({ obras: data.obras });
   }
 
   render(){

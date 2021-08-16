@@ -98,6 +98,47 @@ export class Validacao {
             };
         }
     }
+     /**
+     * Middleware que verifica se a categoria existe.
+     */
+    categoriaExiste(){
+        let categoria = this.req.query.categoria.toUpperCase();
+        let regex = new RegExp(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|URBANISMO|ADMINISTRACAO)$/);
+        let existe = regex.test(categoria);
+        if (!existe){
+            throw {
+                status: CODIGO_STATUS.OBRA.CATEGORIA_NAO_EXISTE,
+                erro: `Categoria ${categoria} não existe.`
+            }; 
+        }
+    }
+
+     /**
+     * Middleware que verifica se o tipo de ordem existe.
+     */
+    tipoOrdemExiste(){
+        let ordenar = this.req.query.ordenar.toUpperCase();
+        let regex = new RegExp(/^(RECENTE|ANTIGO)$/);
+        let existe = regex.test(ordenar);
+        if(!existe){
+            throw{
+                status: CODIGO_STATUS.OBRA.TIPO_ORDEM_NAO_EXISTE,
+                erro: `Tipo de ordem ${ordenar} não existe.`
+            }
+        }
+    }
+    /**
+     * Middleware que verifica se o valor informado é um número.
+     */
+    quantidadeValida(){
+        let quantidade = Number(this.req.query.quantidade);
+        if(isNaN(quantidade)){
+            throw{
+                status: CODIGO_STATUS.OBRA.QUANTIDADE_INVALIDA,
+                erro: `O valor informado ${quantidade} não é válido.`
+            }
+        }
+    }
 
     /**
      * Middleware para verificar se método HTTP especificado é o correto.

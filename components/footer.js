@@ -1,5 +1,4 @@
 import { Component } from "react";
-import style from '../styles/style1.module.css';
 
 export default class Footer extends Component {
 
@@ -9,9 +8,11 @@ export default class Footer extends Component {
 
     render() {
         return (
-            <nav className={style.bg1 + " navbar navbar-expand-lg justify-content-center navbar-light mt-3"}>                    
-                <a className="navbar-brand style: margin-right=1rem; text-white" href="#">Todos os direitos reservados.</a>                 
-            </nav>
+            <footer className="page-footer font-small blue pt-5 mt-5">
+                <div className="footer-copyright text-center py-3"><p>© 2021 Todos os direitos reservados.</p>
+                    Baseado no Modelo para Observatório de Projetos <a href="https://sol.sbc.org.br/index.php/cbsoft_estendido/article/download/7654/7531/">GP2, Cin-UFPE.</a>
+                </div>
+            </footer>
         )
     }
 }
