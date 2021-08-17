@@ -7,24 +7,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Admin {
-  id                  Int @id @default(autoincrement())
-  dataCriacao         DateTime @default(now())
-  dataAtualizacao     DateTime?
-  nome                String
-  email               String @unique
-  senha               String
-  sessoes             Sessao[]
-}
-
-model Sessao {
-  id                  Int @id @default(autoincrement()) 
-  dataCriacao         DateTime @default(now())
-  dataAtualizacao     DateTime?
-  valido              Boolean @default(true)
-  token               String @unique
-  admin               Admin @relation(fields: [adminId], references: [id])
-  adminId             Int
+enum Funcao {
+  GERAL
+  SUPORTE
 }
 
 enum Situacao {
@@ -39,6 +24,28 @@ enum Categoria {
   ASSISTENCIASOCIAL
   ADMINISTRACAO
   URBANISMO
+}
+
+model Admin {
+  id                  Int @id @default(autoincrement())
+  dataCriacao         DateTime @default(now())
+  dataAtualizacao     DateTime?
+  nome                String
+  funcao              Funcao
+  primeiroAcesso      Boolean @default(false)
+  email               String @unique
+  senha               String
+  sessoes             Sessao[]
+}
+
+model Sessao {
+  id                  Int @id @default(autoincrement()) 
+  dataCriacao         DateTime @default(now())
+  dataAtualizacao     DateTime?
+  valido              Boolean @default(true)
+  token               String @unique
+  admin               Admin @relation(fields: [adminId], references: [id])
+  adminId             Int
 }
 
 model Obra {

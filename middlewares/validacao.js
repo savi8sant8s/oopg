@@ -2,6 +2,7 @@ import { CODIGO_STATUS } from "../services/codigo-status";
 import { PrismaClient } from "@prisma/client";
 import { OAuth2Client } from "google-auth-library";
 import moment from "moment";
+import bcrypt from "bcrypt";
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
@@ -29,6 +30,64 @@ export class Validacao {
                 erro: erro
             };
         });
+    }
+
+    /**
+    * Middleware que verifica se email do  novo admin ainda não foi cadastrado.
+    */
+    async emailNaoCadastrado(){
+        let existe = await prisma.admin.findUnique({ where: { email: this.req.body.email } });
+        if (existe) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.EMAIL_JA_EXISTE,
+                erro: `O email ${this.req.body.email} já está cadastrado.`
+            };
+        }
+    }
+
+    /**
+    * Middleware que verifica se admin pode manipular outros admins.
+    */
+    async podeManipularAdmins() {
+        let token = this.req.headers.authorization.split(' ')[1];
+        let sessaoAberta = await prisma.sessao.findFirst({ where: { token: token, valido: true } });
+        let admin = await prisma.admin.findUnique({where: {id: sessaoAberta.adminId}});
+        if (admin.funcao == "SUPORTE") {
+            throw {
+                status: CODIGO_STATUS.ADMIN.OPERACAO_NAO_PERMITIDA,
+                erro: "Você não tem permissão para criar, alterar ou deletar outros admins."
+            };
+        }
+    }
+
+    /**
+    * Middleware que verifica se admin já realizou o primeiro acesso.
+    */
+    async primeiroAcesso(){
+        let token = this.req.headers.authorization.split(' ')[1];
+        let sessaoAberta = await prisma.sessao.findFirst({ where: { token: token, valido: true } });
+        let admin = await prisma.admin.findUnique({where: {id: sessaoAberta.adminId}});
+        if (!admin.primeiroAcesso) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO,
+                erro: "Você ainda não realizou o primeiro acesso."
+            };
+        }
+    }
+
+     /**
+    * Middleware que verifica se admin quer tentar aletrar a senha mesmo já tendo alterado.
+    */
+      async precisaAlterarSenha(){
+        let token = this.req.headers.authorization.split(' ')[1];
+        let sessaoAberta = await prisma.sessao.findFirst({ where: { token: token, valido: true } });
+        let admin = await prisma.admin.findUnique({where: {id: sessaoAberta.adminId}});
+        if (admin.primeiroAcesso) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.JA_REALIZOU_PRIMEIRO_ACESSO,
+                erro: "Você já realizou o primeiro acesso."
+            };
+        }
     }
 
     /**
@@ -87,6 +146,45 @@ export class Validacao {
     }
 
     /**
+     * Middleware que verifica se senha do admin é válida.
+     */
+    async senhaAdmin(adminSenha) {
+        let senhaValida = await bcrypt.compare(this.req.body.senha, adminSenha);
+        if (!senhaValida) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS,
+                erro: `Credenciais inválidas.`
+            };
+        }
+    }
+
+    /**
+     * Middleware que verifica se admin com esse email já existe.
+     */
+     async adminExiste() {
+        let existe = await prisma.admin.findUnique({ where: { email: this.req.body.email } });
+        if (!existe) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS,
+                erro: `Credenciais inválidas.`
+            };
+        }
+    }
+
+     /**
+     * Middleware que verifica se admin com esse id já existe.
+     */
+      async adminIdExiste() {
+        let existe = await prisma.admin.findUnique({ where: { id: Number(this.req.query.adminId) } });
+        if (!existe) {
+            throw {
+                status: CODIGO_STATUS.ADMIN.NAO_EXISTE,
+                erro: `O Admin com o ID ${this.req.query.adminId} não existe.`
+            };
+        }
+    }
+
+    /**
      * Middleware que verifica se notícia existe.
      */
     async noticiaExiste() {
@@ -98,6 +196,7 @@ export class Validacao {
             };
         }
     }
+
      /**
      * Middleware que verifica se a categoria existe.
      */

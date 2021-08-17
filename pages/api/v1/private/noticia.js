@@ -13,6 +13,7 @@ export default capturarExcecoes(
 
         validar.metodo(["POST"]);
         await validar.tokenAdmin();
+        await validar.primeiroAcesso();
         await validar.corpo(schema.noticia);
 
         let resposta = {};

@@ -13,6 +13,7 @@ export default capturarExcecoes(
 
         validar.metodo(["PUT", "DELETE"]);
         await validar.tokenAdmin();
+        await validar.primeiroAcesso();
         await validar.obraExiste();
 
         let resposta = {};

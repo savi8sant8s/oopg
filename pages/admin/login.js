@@ -53,7 +53,7 @@ export default class AdminLogin extends Component {
         let corpo = {email: this.state.email, senha: this.state.senha};
         schema.login.validate(corpo).then(() => {
             this.toggleSpinner();
-            axios.post("/api/v1/admin/login", corpo).then((res) => {
+            axios.post("/api/v1/private/login", corpo).then((res) => {
                 this.toggleSpinner();
                 let resposta = res.data;
                 switch (resposta.status) {

@@ -78,6 +78,14 @@ export const schema = {
         categoria: yup.string().matches(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|ADMINISTRACAO|URBANISMO)$/).required()
       })
     ).required()
+  }),
+  admin: yup.object({
+    nome: yup.string().min(5).max(30).required(),
+    funcao: yup.string().matches(/^(GERAL|SUPORTE)$/).required(),
+    email: yup.string().email().required()
+  }),
+  alteracaoSenha: yup.object({
+    senha: yup.string().min(8).max(32).required()
   })
 };
 

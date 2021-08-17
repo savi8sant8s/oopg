@@ -1,0 +1,39 @@
+import { PrismaClient } from "@prisma/client";
+import { Validacao } from "../../../../middlewares/validacao";
+import { schema } from "../../../../services/schemas";
+import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import moment from "moment";
+import randtoken from 'rand-token';
+import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
+
+const prisma = new PrismaClient();
+
+export default capturarExcecoes(
+  async (req, res) => {
+    let validar = new Validacao(req, res);
+
+    validar.metodo(["POST"]);
+    await validar.corpo(schema.login);
+    await validar.adminExiste();
+
+    let resposta = {};
+    resposta.dataHora = moment().format();
+
+    let admin = await prisma.admin.findUnique({ where: { email: req.body.email } });
+
+    await validar.senhaAdmin(admin.senha);
+
+    resposta.token = randtoken.generate(30);
+    await prisma.sessao.updateMany({ where: { adminId: admin.id }, data: { valido: false, dataAtualizacao: resposta.dataHora } });
+    await prisma.sessao.create({ data: { token: resposta.token, adminId: admin.id } });
+    if (!admin.primeiroAcesso) {
+      resposta.status = CODIGO_STATUS.ADMIN.LOGIN_PRIMEIRO_ACESSO;
+      resposta.adminId = admin.id;
+    } else {
+      resposta.status = CODIGO_STATUS.ADMIN.LOGIN_SUCESSO;
+    }
+    res.status(200).json(resposta);
+  }
+);
+
+

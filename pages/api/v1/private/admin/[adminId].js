@@ -13,22 +13,24 @@ export default capturarExcecoes(
 
         validar.metodo(["PUT", "DELETE"]);
         await validar.tokenAdmin();
-        await validar.noticiaExiste();
-
+        await validar.primeiroAcesso();
+        await validar.podeManipularAdmins();
+        await validar.adminIdExiste();
+        
         let resposta = {};
         resposta.dataHora = moment().format();
 
-        let noticiaId = Number(req.query.noticiaId);
+        let adminId = Number(req.query.adminId);
 
         if (req.method == "PUT") {
-            await validar.corpo(schema.noticia);
+            await validar.corpo(schema.admin);
             req.body.dataAtualizacao = moment().format();
-            await prisma.noticia.update({ data: req.body, where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.ALTERADA_SUCESSO;
+            await prisma.admin.update({ data: req.body, where: { id: adminId } });
+            resposta.status = CODIGO_STATUS.ADMIN.ALTERADO_SUCESSO;
         }
         else if (req.method == "DELETE") {
-            await prisma.noticia.delete({ where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.DELETADA_SUCESSO;
+            await prisma.admin.delete({ where: { id: adminId } });
+            resposta.status = CODIGO_STATUS.ADMIN.DELETADO_SUCESSO;
         }
 
         res.status(200).json(resposta);
