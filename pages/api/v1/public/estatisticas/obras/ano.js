@@ -15,7 +15,7 @@ export default capturarExcecoes(
             where "contratoDataInicio" is not null
             group by 1`);
           
-        resposta.status = CODIGO_STATUS.ESTATISTICA.OBRA_ANO_SUCESSO;
+        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.ANO_SUCESSO;
         res.status(200).json(resposta);
     }
 )

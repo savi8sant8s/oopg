@@ -13,7 +13,7 @@ export default capturarExcecoes(
         resposta.quantAndamento = await prisma.obra.count({where:{situacao:"ANDAMENTO"}});
         resposta.quantParalizadas = await prisma.obra.count({where:{situacao:"PARALIZADO"}});
     
-        resposta.status = CODIGO_STATUS.ESTATISTICA.OBRA_SITUACAO_SUCESSO;
+        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.SITUACAO_SUCESSO;
         res.status(200).json(resposta);
     }
 )

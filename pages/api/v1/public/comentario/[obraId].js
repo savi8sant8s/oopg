@@ -21,8 +21,8 @@ export default capturarExcecoes(
 
     req.body.obraId = Number(req.query.obraId);
     await prisma.comentario.create({ data: req.body });
-    resposta.status = CODIGO_STATUS.OBRA.COMENTARIO_CRIADO_SUCESSO;
+    resposta.status = CODIGO_STATUS.COMENTARIO.CRIADO_SUCESSO;
 
-    res.status(200).json(resposta);
+    res.status(201).json(resposta);
   }
 );

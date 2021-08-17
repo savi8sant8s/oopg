@@ -19,8 +19,8 @@ export default capturarExcecoes(
         resposta.dataHora = moment().format();
 
         await prisma.noticia.create({ data: req.body });
-        resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_CRIADA_SUCESSO;
+        resposta.status = CODIGO_STATUS.NOTICIA.CRIADA_SUCESSO;
 
-        res.status(200).json(resposta);
+        res.status(201).json(resposta);
     }
 );

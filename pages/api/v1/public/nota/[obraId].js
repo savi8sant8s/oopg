@@ -22,13 +22,13 @@ export default capturarExcecoes(
     let obraId = Number(req.query.obraId);
     let jaVotou = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: obraId } });
     if (jaVotou) {
-      resposta.status = CODIGO_STATUS.OBRA.NOTA_JA_EXISTE;
+      resposta.status = CODIGO_STATUS.NOTA.JA_EXISTE;
     }
     else {
       await prisma.nota.create({ data: { email: req.body.email, nota: Number(req.body.nota), obraId: obraId } });
-      resposta.status = CODIGO_STATUS.OBRA.NOTA_CRIADA_SUCESSO;
+      resposta.status = CODIGO_STATUS.NOTA.CRIADA_SUCESSO;
     }
 
-    res.status(200).json(resposta);
+    res.status(201).json(resposta);
   }
 );

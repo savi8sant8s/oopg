@@ -21,7 +21,7 @@ export default capturarExcecoes(
         resposta.gostou = await prisma.nota.count({ where: { obraId: obraId, nota: 1 } });
         resposta.indiferente = await prisma.nota.count({ where: { obraId: obraId, nota: 2 } });
         resposta.naogostou = await prisma.nota.count({ where: { obraId: obraId, nota: 3 } });
-        resposta.status = CODIGO_STATUS.OBRA.NOTAS_OBRA_SUCESSO;
+        resposta.status = CODIGO_STATUS.NOTA.SUCESSO;
 
         res.status(200).json(resposta);
     }

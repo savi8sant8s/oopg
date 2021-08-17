@@ -20,7 +20,7 @@ export default capturarExcecoes(
             consulta.take = Number(req.query.quant);
         }
         resposta.noticias = await prisma.noticia.findMany(consulta);
-        resposta.status = CODIGO_STATUS.NOTICIA.NOTICIAS_SUCESSO;
+        resposta.status = CODIGO_STATUS.NOTICIA.SUCESSO;
 
         res.status(200).json(resposta);
     }

@@ -21,8 +21,8 @@ export default capturarExcecoes(
         req.body.contratoPrazo = new Date(req.body.contratoPrazo).toISOString();
         req.body.contratoDataConclusao = new Date(req.body.contratoDataConclusao).toISOString();
         await prisma.obra.create({ data: req.body });
-        resposta.status = CODIGO_STATUS.OBRA.OBRA_CRIADA_SUCESSO;
+        resposta.status = CODIGO_STATUS.OBRA.CRIADA_SUCESSO;
 
-        res.status(200).json(resposta);
+        res.status(201).json(resposta);
     }
 );

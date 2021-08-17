@@ -15,7 +15,7 @@ export default capturarExcecoes(
         resposta.quantSaude = await prisma.obra.count({where:{categoria:"SAUDE"}});
         resposta.quantUrbanismo = await prisma.obra.count({where:{categoria:"URBANISMO"}});
     
-        resposta.status = CODIGO_STATUS.ESTATISTICA.OBRA_CATEGORIA_SUCESSO;
+        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.CATEGORIA_SUCESSO;
         res.status(200).json(resposta);
     }
 )
