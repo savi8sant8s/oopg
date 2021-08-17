@@ -11,7 +11,7 @@ export default capturarExcecoes(
   async (req, res) => {
     let validar = new Validacao(req, res);
 
-    validar.metodo(["POST"]);
+    validar.metodo(["PUT"]);
     await validar.tokenGoogle();
     await validar.obraExiste();
     await validar.corpo(schema.nota);
@@ -20,9 +20,10 @@ export default capturarExcecoes(
     resposta.dataHora = moment().format();
 
     let obraId = Number(req.query.obraId);
-    let jaVotou = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: obraId } });
-    if (jaVotou) {
-      resposta.status = CODIGO_STATUS.NOTA.JA_EXISTE;
+    let votoExistente = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: obraId } });
+    if (votoExistente) {
+      await prisma.nota.update({ data: { nota: Number(req.body.nota) }, where: { id: votoExistente.id } });
+      resposta.status = CODIGO_STATUS.NOTA.ATUALIZADA_SUCESSO;
     }
     else {
       await prisma.nota.create({ data: { email: req.body.email, nota: Number(req.body.nota), obraId: obraId } });

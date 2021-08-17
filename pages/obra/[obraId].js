@@ -104,10 +104,10 @@ class Interacao extends Component {
             headers: {Authorization: `Bearer ${resposta.tokenId}`}
         };
         schema.nota.validate(corpo).then(() => {
-            axios.post(`/api/v1/public/nota/${this.props.obraId}`, corpo, headers).then((res) => {
+            axios.put(`/api/v1/public/nota/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
-                    case CODIGO_STATUS.OBRA.NOTA_CRIADA_SUCESSO:
+                    case CODIGO_STATUS.NOTA.CRIADA_SUCESSO:
                         mostrarAlerta("Obrigado por votar", "Nota criada com sucesso.");
                         setTimeout(() => {
                             window.location.reload();
@@ -116,8 +116,11 @@ class Interacao extends Component {
                     case CODIGO_STATUS.SESSAO.TOKEN_INVALIDO:
                         mostrarAlerta('Credenciais Google inválidas', 'Tente votar novamente.');
                         break;
-                    case CODIGO_STATUS.OBRA.NOTA_JA_EXISTE:
-                        mostrarAlerta('Já votou', 'Você já deu nota pra essa obra.');
+                    case CODIGO_STATUS.NOTA.ATUALIZADA_SUCESSO:
+                        mostrarAlerta('Obrigado por atualizar sua nota', 'Nota atualizada com sucesso.');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
                         break;
                     case CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS:
                         mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
@@ -148,7 +151,7 @@ class Interacao extends Component {
             axios.post(`/api/v1/public/comentario/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
-                    case CODIGO_STATUS.OBRA.COMENTARIO_CRIADO_SUCESSO:
+                    case CODIGO_STATUS.COMENTARIO.CRIADO_SUCESSO:
                         mostrarAlerta("Obrigado por comentar", "Comentário criado com sucesso.");
                         setTimeout(() => {
                             window.location.reload();
