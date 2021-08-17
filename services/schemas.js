@@ -49,6 +49,35 @@ export const schema = {
     valorPagoAcumulado: yup.number().required(),
     situacao: yup.string().matches(/^(CONCLUIDO|ANDAMENTO|PARALIZADO)$/).required(),
     categoria: yup.string().matches(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|ADMINISTRACAO|URBANISMO)$/).required()
+  }),
+  obras: yup.object({
+    obras: yup.array().of(yup.object(
+      {
+        numeroLicitacao: yup.string().required(),
+        descricao: yup.string().min(10).max(100).required(),
+        convenioNumeroAno: yup.string().required(),
+        convenioConcedente: yup.string().required(),
+        convenioRepasse: yup.number().required(),
+        convenioContrapartida: yup.number().required(),
+        contratadoCpfCcnpj: yup.string().min(11).max(14).required(),
+        contratadoRazaoSocial: yup.string().min(5).max(30).required(),
+        contratoNumeroAno: yup.string().required(),
+        contratoDataInicio: yup.string().matches(/^\d{2}\/\d{2}\/\d{4}$/).required(),
+        contratoPrazo: yup.string().matches(/^\d{2}\/\d{2}\/\d{4}$/).required(),
+        contratoValorContratado: yup.number().required(),
+        contratoDataConclusao: yup.string().matches(/^\d{2}\/\d{2}\/\d{4}$/).required(),
+        aditivoPrazoAditado: yup.string().required(),
+        aditivoValorAditado: yup.string().required(),
+        execucaoReajuste: yup.number().required(),
+        execucaoNaturezaDespesa: yup.string().min(5).max(50).required(),
+        execucaoValorMedidoAcumulado: yup.number().required(),
+        execucaoValorPagoAcumuladoPeriodo: yup.number().required(),
+        execucaoValorPagoAcumuladoExercicio: yup.number().required(),
+        valorPagoAcumulado: yup.number().required(),
+        situacao: yup.string().matches(/^(CONCLUIDO|ANDAMENTO|PARALIZADO)$/).required(),
+        categoria: yup.string().matches(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|ADMINISTRACAO|URBANISMO)$/).required()
+      })
+    ).required()
   })
 };
 
