@@ -24,11 +24,11 @@ export default capturarExcecoes(
             await validar.corpo(schema.noticia);
             req.body.dataAtualizacao = moment().format();
             await prisma.noticia.update({ data: req.body, where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_ALTERADA_SUCESSO;
+            resposta.status = CODIGO_STATUS.NOTICIA.ALTERADA_SUCESSO;
         }
         else if (req.method == "DELETE") {
             await prisma.noticia.delete({ where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.NOTICIA_DELETADA_SUCESSO;
+            resposta.status = CODIGO_STATUS.NOTICIA.DELETADA_SUCESSO;
         }
 
         res.status(200).json(resposta);

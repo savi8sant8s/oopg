@@ -19,7 +19,7 @@ export default capturarExcecoes(
         let obraId = Number(req.query.obraId);
 
         resposta.obra = await prisma.obra.findUnique({ where: { id: obraId } });
-        resposta.status = CODIGO_STATUS.OBRA.OBRAS_SUCESSO;
+        resposta.status = CODIGO_STATUS.OBRA.SUCESSO;
 
         res.status(200).json(resposta);
     }

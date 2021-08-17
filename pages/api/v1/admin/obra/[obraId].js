@@ -27,10 +27,10 @@ export default capturarExcecoes(
             req.body.contratoPrazo = new Date(req.body.contratoPrazo).toISOString();
             req.body.contratoDataConclusao = new Date(req.body.contratoDataConclusao).toISOString();
             await prisma.obra.update({ data: req.body, where: { id: obraId } });
-            resposta.status = CODIGO_STATUS.OBRA.OBRA_ALTERADA_SUCESSO;
+            resposta.status = CODIGO_STATUS.OBRA.ALTERADA_SUCESSO;
         } else if (req.method == "DELETE") {
             await prisma.obra.delete({where: {id: obraId}});
-            resposta.status = CODIGO_STATUS.OBRA.OBRA_DELETADA_SUCESSO;
+            resposta.status = CODIGO_STATUS.OBRA.DELETADA_SUCESSO;
         }
 
         res.status(200).json(resposta);

@@ -80,7 +80,7 @@ export class Validacao {
         let existe = await prisma.obra.findUnique({ where: { id: Number(this.req.query.obraId) } });
         if (!existe) {
             throw {
-                status: CODIGO_STATUS.OBRA.OBRA_NAO_EXISTE,
+                status: CODIGO_STATUS.OBRA.NAO_EXISTE,
                 erro: `Obra com o ID ${this.req.query.obraId} não existe.`
             };
         }
@@ -93,7 +93,7 @@ export class Validacao {
         let existe = await prisma.noticia.findUnique({ where: { id: Number(this.req.query.noticiaId) } });
         if (!existe) {
             throw {
-                status: CODIGO_STATUS.NOTICIA.NOTICIA_NAO_EXISTE,
+                status: CODIGO_STATUS.NOTICIA.NAO_EXISTE,
                 erro: `Notícia com o ID ${this.req.query.noticiaId} não existe.`
             };
         }
@@ -107,7 +107,7 @@ export class Validacao {
         let existe = regex.test(categoria);
         if (!existe){
             throw {
-                status: CODIGO_STATUS.OBRA.CATEGORIA_NAO_EXISTE,
+                status: CODIGO_STATUS.FILTRO_OBRAS.CATEGORIA_NAO_EXISTE,
                 erro: `Categoria ${categoria} não existe.`
             }; 
         }
@@ -122,7 +122,7 @@ export class Validacao {
         let existe = regex.test(ordenar);
         if(!existe){
             throw{
-                status: CODIGO_STATUS.OBRA.TIPO_ORDEM_NAO_EXISTE,
+                status: CODIGO_STATUS.FILTRO_OBRAS.TIPO_ORDEM_NAO_EXISTE,
                 erro: `Tipo de ordem ${ordenar} não existe.`
             }
         }
@@ -134,7 +134,7 @@ export class Validacao {
         let quantidade = Number(this.req.query.quantidade);
         if(isNaN(quantidade)){
             throw{
-                status: CODIGO_STATUS.OBRA.QUANTIDADE_INVALIDA,
+                status: CODIGO_STATUS.FILTRO_OBRAS.QUANTIDADE_INVALIDA,
                 erro: `O valor informado ${quantidade} não é válido.`
             }
         }

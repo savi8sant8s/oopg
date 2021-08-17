@@ -16,7 +16,7 @@ export const capturarExcecoes = (handler) => async (req, res) => {
             });
         } else{
             console.log(erro);
-            res.status(400).json({
+            res.status(500).json({
                 dataHora: moment().format(),
                 status: CODIGO_STATUS.ERRO.PROBLEMA_INESPERADO,
                 erro: "Contate o mantenedor do observatório."

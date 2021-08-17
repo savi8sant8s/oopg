@@ -16,7 +16,7 @@ export default capturarExcecoes(
             }
         });
         resposta.gastoTotal = Math.trunc(resposta.gastoTotal._sum.valorPagoAcumulado);
-        resposta.status = CODIGO_STATUS.OBRA.OBRA_BALANCO_SUCESSO;
+        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.BALANCO_SUCESSO;
         res.status(200).json(resposta);
     }
 )

@@ -47,7 +47,7 @@ export default capturarExcecoes(
         resposta.obras = await prisma.obra.findMany(consulta);
         delete consulta.select;
         resposta.quantObras = await prisma.obra.count(consulta);
-        resposta.status = CODIGO_STATUS.OBRA.OBRAS_SUCESSO;
+        resposta.status = CODIGO_STATUS.OBRA.SUCESSO;
 
         res.status(200).json(resposta);
     }

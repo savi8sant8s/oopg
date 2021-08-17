@@ -17,7 +17,7 @@ export default capturarExcecoes(
         resposta.dataHora = moment().format();
         resposta.comentarios = await prisma.comentario.findMany({ where: { obraId: Number(req.query.obraId) } });
         resposta.quantComentarios = await prisma.comentario.count({ where: { obraId: Number(req.query.obraId) } });
-        resposta.status = CODIGO_STATUS.OBRA.COMENTARIOS_OBRA_SUCESSO;
+        resposta.status = CODIGO_STATUS.COMENTARIO.SUCESSO;
         res.status(200).json(resposta);
     }
 );
