@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import formVazio from "../../services/form-vazio";
 import mostrarAlerta from "../../services/alerta-padrao";
-import { CODIGO_STATUS } from "../../services/codigo-status";
+import { STATUS } from "../../services/codigo-status";
 import { schema } from "../../services/schemas";
 
 export default class AdminLogin extends Component {
@@ -57,16 +57,16 @@ export default class AdminLogin extends Component {
                 this.toggleSpinner();
                 let resposta = res.data;
                 switch (resposta.status) {
-                    case CODIGO_STATUS.ADMIN.LOGIN_SUCESSO:
+                    case STATUS.ADMIN.LOGIN_SUCESSO:
                         window.location.href = "/home";
                         break;
-                    case CODIGO_STATUS.ADMIN.LOGIN_USUARIO_INEXISTENTE:
+                    case STATUS.ADMIN.LOGIN_USUARIO_INEXISTENTE:
                         mostrarAlerta('Usuário não existe', 'Verifique o preenchimento do formulário.');
                         break;
-                    case CODIGO_STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS:
+                    case STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS:
                         mostrarAlerta('Credenciais inválidas', 'Verifique o preenchimento do formulário.');
                         break;
-                    case CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS:
+                    case STATUS.CORPO.CAMPOS_INCORRETOS:
                         mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
                         break;
                     default:

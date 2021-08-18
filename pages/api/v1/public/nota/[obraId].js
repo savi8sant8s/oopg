@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../../services/codigo-status";
+import { Validacao } from "../../../../../services/validacao";
+import { STATUS } from "../../../../../services/codigo-status";
 import { schema } from "../../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
@@ -12,7 +12,7 @@ export default capturarExcecoes(
     let validar = new Validacao(req, res);
 
     validar.metodo(["PUT"]);
-    await validar.tokenGoogle();
+    await validar.token("CLIENTE_GOOGLE");
     await validar.obraExiste();
     await validar.corpo(schema.nota);
 
@@ -23,11 +23,11 @@ export default capturarExcecoes(
     let votoExistente = await prisma.nota.findFirst({ where: { email: req.body.email, obraId: obraId } });
     if (votoExistente) {
       await prisma.nota.update({ data: { nota: Number(req.body.nota) }, where: { id: votoExistente.id } });
-      resposta.status = CODIGO_STATUS.NOTA.ATUALIZADA_SUCESSO;
+      resposta.status = STATUS.NOTA.ATUALIZADA_SUCESSO;
     }
     else {
       await prisma.nota.create({ data: { email: req.body.email, nota: Number(req.body.nota), obraId: obraId } });
-      resposta.status = CODIGO_STATUS.NOTA.CRIADA_SUCESSO;
+      resposta.status = STATUS.NOTA.CRIADA_SUCESSO;
     }
 
     res.status(201).json(resposta);

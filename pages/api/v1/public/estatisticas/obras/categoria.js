@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CODIGO_STATUS } from "../../../../../../services/codigo-status";
+import { STATUS } from "../../../../../../services/codigo-status";
 import {capturarExcecoes} from "../../../../../../middlewares/capturar-excecoes"
 import moment from "moment";
 
@@ -15,7 +15,7 @@ export default capturarExcecoes(
         resposta.quantSaude = await prisma.obra.count({where:{categoria:"SAUDE"}});
         resposta.quantUrbanismo = await prisma.obra.count({where:{categoria:"URBANISMO"}});
     
-        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.CATEGORIA_SUCESSO;
+        resposta.status = STATUS.ESTATISTICA_OBRAS.CATEGORIA_SUCESSO;
         res.status(200).json(resposta);
     }
 )

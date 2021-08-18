@@ -17,7 +17,7 @@ import { GoogleLogin } from 'react-google-login';
 import axios from "axios";
 import moment from "moment";
 import { schema } from "../../services/schemas";
-import { CODIGO_STATUS } from "../../services/codigo-status";
+import { STATUS } from "../../services/codigo-status";
 import mostrarAlerta from "../../services/alerta-padrao";
 import formVazio from "../../services/form-vazio";
 import Swal from "sweetalert2";
@@ -107,22 +107,22 @@ class Interacao extends Component {
             axios.put(`/api/v1/public/nota/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
-                    case CODIGO_STATUS.NOTA.CRIADA_SUCESSO:
+                    case STATUS.NOTA.CRIADA_SUCESSO:
                         mostrarAlerta("Obrigado por votar", "Nota criada com sucesso.");
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000);
                         break;
-                    case CODIGO_STATUS.SESSAO.TOKEN_INVALIDO:
+                    case STATUS.SESSAO.TOKEN_INVALIDO:
                         mostrarAlerta('Credenciais Google inválidas', 'Tente votar novamente.');
                         break;
-                    case CODIGO_STATUS.NOTA.ATUALIZADA_SUCESSO:
+                    case STATUS.NOTA.ATUALIZADA_SUCESSO:
                         mostrarAlerta('Obrigado por atualizar sua nota', 'Nota atualizada com sucesso.');
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000);
                         break;
-                    case CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS:
+                    case STATUS.CORPO.CAMPOS_INCORRETOS:
                         mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
                         break;
                     default:
@@ -151,16 +151,16 @@ class Interacao extends Component {
             axios.post(`/api/v1/public/comentario/${this.props.obraId}`, corpo, headers).then((res) => {
                 let resposta = res.data;
                 switch (resposta.status) {
-                    case CODIGO_STATUS.COMENTARIO.CRIADO_SUCESSO:
+                    case STATUS.COMENTARIO.CRIADO_SUCESSO:
                         mostrarAlerta("Obrigado por comentar", "Comentário criado com sucesso.");
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000);
                         break;
-                    case CODIGO_STATUS.SESSAO.TOKEN_INVALIDO:
+                    case STATUS.SESSAO.TOKEN_INVALIDO:
                         mostrarAlerta('Credenciais Google inválidas', 'Tente comentar novamente.');
                         break;
-                    case CODIGO_STATUS.CORPO.CAMPOS_INCORRETOS:
+                    case STATUS.CORPO.CAMPOS_INCORRETOS:
                         mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
                         break;
                     default:

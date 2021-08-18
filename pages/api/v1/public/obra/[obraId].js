@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../../middlewares/validacao";
+import { Validacao } from "../../../../../services/validacao";
 import moment from "moment";
-import { CODIGO_STATUS } from "../../../../../services/codigo-status";
+import { STATUS } from "../../../../../services/codigo-status";
 import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
 
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ export default capturarExcecoes(
         let obraId = Number(req.query.obraId);
 
         resposta.obra = await prisma.obra.findUnique({ where: { id: obraId } });
-        resposta.status = CODIGO_STATUS.OBRA.SUCESSO;
+        resposta.status = STATUS.OBRA.SUCESSO;
 
         res.status(200).json(resposta);
     }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../../../services/codigo-status";
+import { Validacao } from "../../../../../../services/validacao";
+import { STATUS } from "../../../../../../services/codigo-status";
 import { schema } from "../../../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../../../middlewares/capturar-excecoes";
@@ -13,9 +13,9 @@ export default capturarExcecoes(
         let validar = new Validacao(req, res);
 
         validar.metodo(["PATCH"]);
-        await validar.tokenAdmin();
+        await validar.token("ADMIN");
         await validar.adminIdExiste();
-        await validar.precisaAlterarSenha();
+        await validar.primeiroAcesso(true);
         await validar.corpo(schema.alteracaoSenha);
 
         let resposta = {};
@@ -28,7 +28,7 @@ export default capturarExcecoes(
 
         req.body.dataAtualizacao = moment().format();
         await prisma.admin.update({ data: {senha: hash, primeiroAcesso: true}, where: { id: adminId } });
-        resposta.status = CODIGO_STATUS.ADMIN.SENHA_ALTERADA_SUCESSO;
+        resposta.status = STATUS.ADMIN.SENHA_ALTERADA_SUCESSO;
 
 
         res.status(200).json(resposta);

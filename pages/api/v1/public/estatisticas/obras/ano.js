@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CODIGO_STATUS } from "../../../../../../services/codigo-status";
+import { STATUS } from "../../../../../../services/codigo-status";
 import {capturarExcecoes} from "../../../../../../middlewares/capturar-excecoes"
 import moment from "moment";
 
@@ -15,7 +15,7 @@ export default capturarExcecoes(
             where "contratoDataInicio" is not null
             group by 1`);
           
-        resposta.status = CODIGO_STATUS.ESTATISTICA_OBRAS.ANO_SUCESSO;
+        resposta.status = STATUS.ESTATISTICA_OBRAS.ANO_SUCESSO;
         res.status(200).json(resposta);
     }
 )

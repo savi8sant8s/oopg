@@ -1,5 +1,5 @@
 import moment from "moment";
-import { CODIGO_STATUS } from "../services/codigo-status";
+import { STATUS } from "../services/codigo-status";
 
 /**
  * Responsável por capturar exceções disparadas ou vindas de funções assíncronas.
@@ -18,7 +18,7 @@ export const capturarExcecoes = (handler) => async (req, res) => {
             console.log(erro);
             res.status(500).json({
                 dataHora: moment().format(),
-                status: CODIGO_STATUS.ERRO.PROBLEMA_INESPERADO,
+                status: STATUS.ERRO.PROBLEMA_INESPERADO,
                 erro: "Contate o mantenedor do observatório."
             });
         }

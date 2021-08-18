@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { Validacao } from "../../../../services/validacao";
+import { STATUS } from "../../../../services/codigo-status";
 import { schema } from "../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
@@ -12,8 +12,8 @@ export default capturarExcecoes(
         let validar = new Validacao(req, res);
 
         validar.metodo(["POST"]);
-        await validar.tokenAdmin();
-        await validar.primeiroAcesso();
+        await validar.token("ADMIN");
+        await validar.primeiroAcesso(false);
         await validar.corpo(schema.obras);
 
         let resposta = {};
@@ -27,7 +27,7 @@ export default capturarExcecoes(
         }
         
         await prisma.obra.createMany({ data: req.body.obras });
-        resposta.status = CODIGO_STATUS.OBRA.CRIADAS_SUCESSO;
+        resposta.status = STATUS.OBRA.CRIADAS_SUCESSO;
 
         res.status(201).json(resposta);
     }

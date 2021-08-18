@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../services/codigo-status";
+import { Validacao } from "../../../../services/validacao";
+import { STATUS } from "../../../../services/codigo-status";
 import { schema } from "../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
@@ -14,11 +14,11 @@ export default capturarExcecoes(
         let validar = new Validacao(req, res);
 
         validar.metodo(["POST"]);
-        await validar.tokenAdmin();
-        await validar.primeiroAcesso();
+        await validar.token("ADMIN");
+        await validar.primeiroAcesso(false);
         await validar.podeManipularAdmins();
         await validar.corpo(schema.admin);
-        await validar.emailNaoCadastrado();
+        await validar.adminEmailExiste("CADASTRO_ADMIN");
 
         let resposta = {};
         resposta.dataHora = moment().format();
@@ -31,7 +31,7 @@ export default capturarExcecoes(
         };
         req.body.senha = hash;
         await prisma.admin.create({data: req.body});
-        resposta.status = CODIGO_STATUS.ADMIN.CRIADO_SUCESSO;
+        resposta.status = STATUS.ADMIN.CRIADO_SUCESSO;
 
         res.status(200).json(resposta);
     }

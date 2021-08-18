@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../../services/codigo-status";
+import { Validacao } from "../../../../../services/validacao";
+import { STATUS } from "../../../../../services/codigo-status";
 import { schema } from "../../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
@@ -12,7 +12,7 @@ export default capturarExcecoes(
     let validar = new Validacao(req, res);
 
     validar.metodo(["POST"]);
-    await validar.tokenGoogle();
+    await validar.token("CLIENTE_GOOGLE");
     await validar.obraExiste();
     await validar.corpo(schema.comentario);
 
@@ -21,7 +21,7 @@ export default capturarExcecoes(
 
     req.body.obraId = Number(req.query.obraId);
     await prisma.comentario.create({ data: req.body });
-    resposta.status = CODIGO_STATUS.COMENTARIO.CRIADO_SUCESSO;
+    resposta.status = STATUS.COMENTARIO.CRIADO_SUCESSO;
 
     res.status(201).json(resposta);
   }

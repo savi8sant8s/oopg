@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Validacao } from "../../../../../middlewares/validacao";
-import { CODIGO_STATUS } from "../../../../../services/codigo-status";
+import { Validacao } from "../../../../../services/validacao";
+import { STATUS } from "../../../../../services/codigo-status";
 import { schema } from "../../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
@@ -12,8 +12,8 @@ export default capturarExcecoes(
         let validar = new Validacao(req, res);
 
         validar.metodo(["PUT", "DELETE"]);
-        await validar.tokenAdmin();
-        await validar.primeiroAcesso();
+        await validar.token("ADMIN");
+        await validar.primeiroAcesso(false);
         await validar.noticiaExiste();
         
         let resposta = {};
@@ -25,11 +25,11 @@ export default capturarExcecoes(
             await validar.corpo(schema.noticia);
             req.body.dataAtualizacao = moment().format();
             await prisma.noticia.update({ data: req.body, where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.ALTERADA_SUCESSO;
+            resposta.status = STATUS.NOTICIA.ALTERADA_SUCESSO;
         }
         else if (req.method == "DELETE") {
             await prisma.noticia.delete({ where: { id: noticiaId } });
-            resposta.status = CODIGO_STATUS.NOTICIA.DELETADA_SUCESSO;
+            resposta.status = STATUS.NOTICIA.DELETADA_SUCESSO;
         }
 
         res.status(200).json(resposta);
