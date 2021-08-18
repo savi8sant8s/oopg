@@ -13,7 +13,7 @@ export default capturarExcecoes(
 
     validar.metodo(["PUT"]);
     await validar.token("CLIENTE_GOOGLE");
-    await validar.obraExiste();
+    await validar.obra();
     await validar.corpo(schema.nota);
 
     let resposta = {};

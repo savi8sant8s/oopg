@@ -11,7 +11,7 @@ export default capturarExcecoes(
         let validar = new Validacao(req, res);
 
         validar.metodo(["GET"]);
-        await validar.obraExiste();
+        await validar.obra();
 
         let resposta = {};
         resposta.dataHora = moment().format();

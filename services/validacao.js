@@ -1,10 +1,10 @@
 import { STATUS } from "./codigo-status";
 import { PrismaClient } from "@prisma/client";
 import { OAuth2Client } from "google-auth-library";
-import { dispararExcecao } from "./erro-padrao";
 
 import moment from "moment";
 import bcrypt from "bcrypt";
+import { dispararExcecao } from "./erro-padrao";
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
@@ -12,9 +12,6 @@ const prisma = new PrismaClient();
 
 moment().locale("pt-br");
 
-/**
- * Responsável por disponibilizar algumas validações.
- */
 export class Validacao {
     
     constructor(req, res) {
@@ -22,30 +19,21 @@ export class Validacao {
         this.res = res;
     }
 
-    /**
-    * Verifica se corpo da requisição está de acordo com o esquema.
-    */
     async corpo(schema) {
         await schema.validate(this.req.body).catch((erro) => {
             dispararExcecao(STATUS.CORPO.CAMPOS_INCORRETOS, erro);
         });
     }
 
-    /**
-    * Verifica se admin tem permissão de manipular outros admins.
-    */
     async podeManipularAdmins() {
-        let admin = await pegarAdminViaToken();
+        let admin = await this.pegarAdminViaToken();
         if (admin.funcao == "SUPORTE") {
             dispararExcecao(STATUS.ADMIN.OPERACAO_NAO_PERMITIDA, "Você não tem permissão para criar, alterar ou deletar outros admins.");
         }
     }
 
-    /**
-    * Quer saber se admin já realizou primeiro acesso ou não.
-    */
     async primeiroAcesso(resposta){
-        let admin = await pegarAdminViaToken();
+        let admin = await this.pegarAdminViaToken();
         if (resposta && admin.primeiroAcesso){
             dispararExcecao(STATUS.ADMIN.JA_REALIZOU_PRIMEIRO_ACESSO, "Você já realizou o primeiro acesso.");
         }
@@ -54,9 +42,6 @@ export class Validacao {
         }
     }
 
-    /**
-    * Verifica se token é válido.
-    */
     async token(usuario) {
         if (!this.req.headers.authorization) {
             dispararExcecao(STATUS.SESSAO.TOKEN_INDEFINIDO, "Token não definido.");
@@ -74,19 +59,13 @@ export class Validacao {
         }
     }
 
-    /**
-     * Verifica se obra existe.
-     */
-    async obraExiste() {
+    async obra() {
         let existe = await prisma.obra.findUnique({ where: { id: Number(this.req.query.obraId) } });
         if (!existe) {
             dispararExcecao(STATUS.OBRA.NAO_EXISTE,`Obra com o ID ${this.req.query.obraId} não existe.`);
         }
     }
 
-    /**
-     * Verifica se senha do admin informada no login é válida.
-     */
     async senhaAdmin(adminSenha) {
         let senhaValida = await bcrypt.compare(this.req.body.senha, adminSenha);
         if (!senhaValida) {
@@ -94,10 +73,7 @@ export class Validacao {
         }
     }
 
-    /**
-     * Quer saber se admin com esse email já existe ou não.
-     */
-    async adminEmailExiste(rota) {
+    async adminEmail(rota) {
         let existe = await prisma.admin.findUnique({ where: { email: this.req.body.email } });
         if (rota == "LOGIN" && !existe) {
             dispararExcecao(STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS, `Credenciais inválidas.`);
@@ -107,30 +83,21 @@ export class Validacao {
         }
     }
 
-     /**
-     * Verifica se admin com esse id já existe.
-     */
-      async adminIdExiste() {
+    async adminId() {
         let existe = await prisma.admin.findUnique({ where: { id: Number(this.req.query.adminId) } });
         if (!existe) {
-            dispararExcecao(STATUS.ADMIN.NAO_EXISTE,`O Admin com o ID ${this.req.query.adminId} não existe.`);
+            dispararExcecao(STATUS.ADMIN.NAO_EXISTE, `O Admin com o ID ${this.req.query.adminId} não existe.`);
         }
     }
 
-    /**
-     * Verifica se notícia existe.
-     */
-    async noticiaExiste() {
+    async noticia() {
         let existe = await prisma.noticia.findUnique({ where: { id: Number(this.req.query.noticiaId) } });
         if (!existe) {
             dispararExcecao(STATUS.NOTICIA.NAO_EXISTE,`Notícia com o ID ${this.req.query.noticiaId} não existe.`);
         }
     }
 
-     /**
-     * Verifica se a categoria existe.
-     */
-    categoriaExiste(){
+    categoria(){
         let categoria = this.req.query.categoria.toUpperCase();
         let regex = new RegExp(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|URBANISMO|ADMINISTRACAO)$/);
         let existe = regex.test(categoria);
@@ -139,10 +106,7 @@ export class Validacao {
         }
     }
 
-     /**
-     * Verifica se o tipo de ordem existe.
-     */
-    tipoOrdemExiste(){
+    tipoOrdem(){
         let ordenar = this.req.query.ordenar.toUpperCase();
         let regex = new RegExp(/^(RECENTE|ANTIGO)$/);
         let existe = regex.test(ordenar);
@@ -151,19 +115,13 @@ export class Validacao {
         }
     }
 
-    /**
-     * Verifica se o valor informado é um número.
-     */
-    quantidadeValida(){
+    quantidade(){
         let quantidade = Number(this.req.query.quantidade);
         if(isNaN(quantidade)){
             dispararExcecao(STATUS.FILTRO_OBRAS.QUANTIDADE_INVALIDA,`O valor ${quantidade} informado não é válido.`);
         }
     }
 
-    /**
-     * Verifica se método HTTP especificado é o correto e disponível pela api.
-     */
     metodo(nomeMetodo) {
         if (!nomeMetodo.includes(this.req.method)) {
             dispararExcecao(STATUS.ERRO.PROBLEMA_INESPERADO, "Recurso não encontrado.");

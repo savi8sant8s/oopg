@@ -1,9 +1,6 @@
 import moment from "moment";
 import { STATUS } from "../services/codigo-status";
 
-/**
- * Responsável por capturar exceções disparadas ou vindas de funções assíncronas.
- */
 export const capturarExcecoes = (handler) => async (req, res) => {
     try {
         await handler(req, res);

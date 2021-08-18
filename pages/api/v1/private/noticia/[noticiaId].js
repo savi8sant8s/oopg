@@ -14,7 +14,7 @@ export default capturarExcecoes(
         validar.metodo(["PUT", "DELETE"]);
         await validar.token("ADMIN");
         await validar.primeiroAcesso(false);
-        await validar.noticiaExiste();
+        await validar.noticia();
         
         let resposta = {};
         resposta.dataHora = moment().format();

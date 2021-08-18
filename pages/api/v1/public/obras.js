@@ -24,12 +24,12 @@ export default capturarExcecoes(
             }
         };
         if(req.query.quantidade){
-            validar.quantidadeValida();
+            validar.quantidade;
             let quantidade = Number(req.query.quantidade);
             consulta.take = quantidade;
         }
         if(req.query.ordenar){
-            validar.tipoOrdemExiste();
+            validar.tipoOrdem;
             let ordenar = req.query.ordenar.toUpperCase();
             let ordem = {
                 "RECENTE" : "desc",
@@ -38,7 +38,7 @@ export default capturarExcecoes(
             consulta.orderBy = {contratoDataInicio: ordem};
         }
         if(req.query.categoria){
-            validar.categoriaExiste();
+            validar.categoria;
             let categoria = req.query.categoria.toUpperCase();
             consulta.where = {
                 categoria: categoria

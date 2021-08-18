@@ -13,7 +13,7 @@ export default capturarExcecoes(
 
     validar.metodo(["POST"]);
     await validar.token("CLIENTE_GOOGLE");
-    await validar.obraExiste();
+    await validar.obra();
     await validar.corpo(schema.comentario);
 
     let resposta = {};

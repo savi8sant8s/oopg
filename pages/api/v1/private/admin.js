@@ -18,7 +18,7 @@ export default capturarExcecoes(
         await validar.primeiroAcesso(false);
         await validar.podeManipularAdmins();
         await validar.corpo(schema.admin);
-        await validar.adminEmailExiste("CADASTRO_ADMIN");
+        await validar.adminEmail("CADASTRO_ADMIN");
 
         let resposta = {};
         resposta.dataHora = moment().format();

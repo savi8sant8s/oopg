@@ -14,7 +14,7 @@ export default capturarExcecoes(
 
     validar.metodo(["POST"]);
     await validar.corpo(schema.login);
-    await validar.adminEmailExiste("LOGIN");
+    await validar.adminEmail("LOGIN");
 
     let resposta = {};
     resposta.dataHora = moment().format();

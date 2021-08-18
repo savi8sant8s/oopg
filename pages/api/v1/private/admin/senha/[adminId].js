@@ -14,7 +14,7 @@ export default capturarExcecoes(
 
         validar.metodo(["PATCH"]);
         await validar.token("ADMIN");
-        await validar.adminIdExiste();
+        await validar.adminId();
         await validar.primeiroAcesso(true);
         await validar.corpo(schema.alteracaoSenha);
 

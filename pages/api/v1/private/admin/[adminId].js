@@ -15,7 +15,7 @@ export default capturarExcecoes(
         await validar.token("ADMIN");
         await validar.primeiroAcesso(false);
         await validar.podeManipularAdmins();
-        await validar.adminIdExiste();
+        await validar.adminId();
         
         let resposta = {};
         resposta.dataHora = moment().format();
