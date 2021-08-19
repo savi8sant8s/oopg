@@ -18,8 +18,8 @@ import axios from "axios";
 import moment from "moment";
 import { schema } from "../../services/schemas";
 import { STATUS } from "../../services/codigo-status";
-import mostrarAlerta from "../../services/alerta-padrao";
-import formVazio from "../../services/form-vazio";
+import { mostrarAlerta } from "../../services/alerta-padrao";
+import { formVazio } from "../../services/form-vazio";
 import Swal from "sweetalert2";
 
 class LoginGoogle extends Component {
