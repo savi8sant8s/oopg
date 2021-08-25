@@ -28,11 +28,22 @@ class ListaObras extends Component {
 
   async componentDidMount() {
     Swal.showLoading();
-    let res = await axios.get("/api/v1/public/obras")
+    let { data } = await axios.get(this.pegarUrl());
     Swal.close();
-    let { data } = res;
     this.setState({ quantObras: data.quantObras });
     this.setState({ obras: data.obras });
+  }
+
+  pegarUrl(){
+    let baseUrl = "/api/v1/public/obras";
+    if (this.props.query.categoria != undefined && this.props.query.categoria != ""){
+      baseUrl += `?categoria=${this.props.query.categoria}`;
+    }
+    if (this.props.query.ordenar != undefined && this.props.query.ordenar != ""){
+      baseUrl += baseUrl.length > 20 ? '&': '?';
+      baseUrl += `ordenar=${this.props.query.ordenar}`;
+    }
+    return baseUrl;
   }
 
   render(){
@@ -52,8 +63,38 @@ class ListaObras extends Component {
 class Filtros extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      categoria: "",
+      ordenar: ""
+    }
+    this.onFiltrarObras = this.onFiltrarObras.bind(this);
+    this.onManipularMudanca = this.onManipularMudanca.bind(this);
   }
 
+  componentDidMount(){
+    this.setState({
+      categoria: this.props.query.categoria,
+      ordenar: this.props.query.ordenar
+    })
+  }
+
+  onManipularMudanca(event) {
+    this.setState({ [event.target.name]: event.target.value });
+    this.onFiltrarObras(event.target.name, event.target.value);
+  }
+
+  onFiltrarObras(filtro, valor){
+    let baseUrl = "";
+    if (filtro == "categoria"){
+      baseUrl += this.state.ordenar != "" || this.state.ordenar != undefined
+      ? `?categoria=${valor}&ordenar=${this.state.ordenar}`: `?categoria=${valor}`;
+    }
+    else if (filtro == "ordenar"){
+      baseUrl += this.state.categoria != "" || this.state.categoria != undefined 
+      ? `?categoria=${this.state.categoria}&ordenar=${valor}`: `?ordenar=${valor}`;
+    }
+    window.location.href = baseUrl;
+  }
 
   render(){
     return (
@@ -62,13 +103,13 @@ class Filtros extends Component {
           <FormGroup row>
             <Label sm={2} >Filtrar por</Label>
             <Col sm={10}>
-              <Input type="select" name="filter">
-                <option>Selecione</option>
-                <option value="SAUDE">Saúde</option>
-                <option value="EDUCACAO">Educação</option>
-                <option value="ASSISTENCIASOCIAL">Assistência Social</option>
-                <option value="ADMINISTRACAO">Administração</option>
-                <option value="URBANISMO">Urbanismo</option>
+              <Input onChange={this.onManipularMudanca} value={this.state.categoria} name="categoria" type="select">
+                <option value="">Todas</option>
+                <option value="saude">Saúde</option>
+                <option value="educacao">Educação</option>
+                <option value="assistenciasocial">Assistência Social</option>
+                <option value="administracao">Administração</option>
+                <option value="urbanismo">Urbanismo</option>
               </Input>
             </Col>
           </FormGroup>
@@ -77,10 +118,10 @@ class Filtros extends Component {
           <FormGroup row>
             <Label sm={2}>Ordenar por</Label>
             <Col sm={10}>
-              <Input type="select" name="sort">
-                <option>Selecione</option>
-                <option value="RECENTE">Mais recente</option>
-                <option value="ANTIGO">Mais antigo</option>
+              <Input onChange={this.onManipularMudanca} value={this.state.ordenar} name="ordenar" type="select">
+                <option value="">Todas</option>
+                <option value="recente">Mais recente</option>
+                <option value="antigo">Mais antigo</option>
               </Input>
             </Col>
           </FormGroup>
@@ -91,6 +132,10 @@ class Filtros extends Component {
 }
 
 export default class Obras extends Component {
+
+  static getInitialProps({ query }) {
+    return { query }
+  }
 
   constructor(props) {
     super(props);
@@ -103,10 +148,10 @@ export default class Obras extends Component {
           <Card className="mt-3">
             <CardHeader>
               <CardTitle className="text-center" tag="h5">Selecione uma obra</CardTitle>
-              <Filtros />
+              <Filtros query={this.props.query}/>
             </CardHeader>
             <CardBody>
-              <ListaObras/>
+              <ListaObras query={this.props.query} />
             </CardBody>
           </ Card>
         </div>

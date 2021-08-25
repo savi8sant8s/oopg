@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Slide } from 'react-slideshow-image';
 import { Chart } from "react-google-charts";
+import Link from 'next/link';
 
 import { 
     Card, 
@@ -96,33 +97,45 @@ class Categorias extends Component {
 
     render() {
         return (
-            <Card className="text-center mt-3" style={{height: "40vh"}}>
+            <Card className="text-center mt-3" style={{height: "40vh", margin: "auto"}}>
                 <CardHeader>
                     <CardTitle>Selecione uma categoria</CardTitle>
                 </CardHeader>
                 <CardBody>
                     <Row>
                         <Col className="m-3">
-                            Saúde
+                            <Link href={"/obras?categoria=saude&ordenar=recente"}>
+                              Saúde
+                            </Link>
                         </Col>
                         <Col className="m-3">
+                            <Link href={"/obras?categoria=educacao&ordenar=recente"}>
                             Educação
+                            </Link>
                         </Col>
                     </Row>
                     <Row>
                         <Col className="m-3">
-                            Assistência Social
+                          <Link href={"/obras?categoria=assistenciasocial&ordenar=recente"}>
+                          Assistência Social
+                            </Link>
                         </Col>
                         <Col className="m-3">
-                            Administração
+                          <Link href={"/obras?categoria=administracao&ordenar=recente"}>
+                          Administração
+                            </Link>
                         </Col>
                     </Row>
                     <Row>
                         <Col className="m-3">
+                          <Link href={"/obras?categoria=urbanismo&ordenar=recente"}>
                             Urbanismo
+                            </Link>
                         </Col>
                         <Col className="m-3">
-                            Todas
+                          <Link href={"/obras?ordenar=recente"}>
+                          Todas
+                            </Link>
                         </Col>
                     </Row>
                 </CardBody>
