@@ -102,6 +102,7 @@ class Categorias extends Component {
 
     constructor(props) {
         super(props);
+        
     }
 
     render() {
