@@ -79,7 +79,7 @@ export class Validacao {
             dispararExcecao(STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS, `Credenciais inválidas.`);
         }
         else if (rota == "CADASTRO_ADMIN" && existe) {
-            dispararExcecao(STATUS.ADMIN.EMAIL_JA_EXISTE, `O email ${this.req.body.email} já está cadastrado.`);
+            dispararExcecao(STATUS.ADMIN.JA_CADASTRADO, `O email ${this.req.body.email} já está cadastrado.`);
         }
     }
 

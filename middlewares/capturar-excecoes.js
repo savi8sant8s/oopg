@@ -6,7 +6,7 @@ export const capturarExcecoes = (handler) => async (req, res) => {
         await handler(req, res);
     } catch (erro) {
         if (erro.status && erro.erro){
-            res.status(400).json({
+            res.status(200).json({
                 dataHora: moment().format(),
                 status: erro.status,
                 erro: erro.erro
