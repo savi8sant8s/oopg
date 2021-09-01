@@ -9,8 +9,8 @@ import {
     Input
 } from 'reactstrap';
 import axios from "axios";
-import formVazio from "../../services/form-vazio";
-import mostrarAlerta from "../../services/alerta-padrao";
+import { formVazio } from "../../services/form-vazio";
+import { mostrarAlerta } from "../../services/alerta-padrao";
 import { STATUS } from "../../services/codigo-status";
 import { schema } from "../../services/schemas";
 
@@ -60,8 +60,8 @@ export default class AdminLogin extends Component {
                     case STATUS.ADMIN.LOGIN_SUCESSO:
                         window.location.href = "/home";
                         break;
-                    case STATUS.ADMIN.LOGIN_USUARIO_INEXISTENTE:
-                        mostrarAlerta('Usuário não existe', 'Verifique o preenchimento do formulário.');
+                    case STATUS.ADMIN.LOGIN_PRIMEIRO_ACESSO:
+                        mostrarAlerta('Primeiro acesso', 'Defina uma nova senha por questçoes de segurança.');
                         break;
                     case STATUS.ADMIN.LOGIN_CREDENCIAIS_INVALIDAS:
                         mostrarAlerta('Credenciais inválidas', 'Verifique o preenchimento do formulário.');

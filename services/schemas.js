@@ -77,7 +77,7 @@ export const schema = {
     ).required()
   }),
   admin: yup.object({
-    nome: yup.string().min(5).max(30).required(),
+    nome: yup.string().matches(/^[a-zA-ZàáâãèéêìíîòóôõùúûýçÀÁÂÃÈÉÊÌÍÎÒÓÔÕÙÚÛÝÇ ]{5,50}$/).required(),
     funcao: yup.string().matches(/^(GERAL|SUPORTE)$/).required(),
     email: yup.string().email().required()
   }),
