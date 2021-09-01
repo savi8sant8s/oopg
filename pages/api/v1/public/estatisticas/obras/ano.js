@@ -13,7 +13,7 @@ export default capturarExcecoes(
             select extract(year from "contratoDataInicio") as ano, count(*) quantidade
             from public."Obra"
             where "contratoDataInicio" is not null
-            group by 1`);
+            group by 1 order by ano`);
           
         resposta.status = STATUS.ESTATISTICA_OBRAS.ANO_SUCESSO;
         res.status(200).json(resposta);

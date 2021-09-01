@@ -14,6 +14,7 @@ import {
     NavLink
  } from "reactstrap";
  import axios from "axios";
+import ModeloGrafico from "../services/modelo-grafico";
 
 class Graficos extends Component {
 
@@ -21,12 +22,29 @@ class Graficos extends Component {
     super(props);
     this.state = {
       qntObras:0,
-      gastoTotal:0};
+      gastoTotal:0,
+      modelos: []
+    };
   }
   async componentDidMount(){
-    let {data} = await axios.get("api/v1/public/estatisticas/obras/balanco")
-    this.setState({qntObras: data.quantObras});
-    this.setState({gastoTotal: data.gastoTotal});
+    let baseUrl = "api/v1/public/estatisticas/obras";
+    let modelos = this.state.modelos;
+    let modeloGrafico = new ModeloGrafico();
+
+    let res = await axios.get(`${baseUrl}/balanco`);
+    this.setState({qntObras: res.data.quantObras});
+    this.setState({gastoTotal: res.data.gastoTotal});
+
+    res = await axios.get(`${baseUrl}/situacao`);
+    modelos.push(modeloGrafico.obrasPorSituacao(res.data));
+    res = await axios.get(`${baseUrl}/categoria`);
+    modelos.push(modeloGrafico.obrasPorCategoria(res.data));
+    res = await axios.get(`${baseUrl}/ano`);
+    modelos.push(modeloGrafico.obrasPorAno(res.data));
+    res = await axios.get(`${baseUrl}/gasto`);
+    modelos.push(modeloGrafico.gastoObrasPorAno(res.data));
+
+    this.setState({modelos: modelos});
   }
 
   render() {
@@ -44,52 +62,16 @@ class Graficos extends Component {
           </Row>
           <div className="slide-container text-center mt-3">
             <Slide indicators={true}>
-              <div className="each-slide">
+              {this.state.modelos.map((modelo, x)=>
+                <div className="each-slide">
                 <h5>Situação das obras</h5>
                 <Chart
-                  chartType="PieChart"
-                  data={[
-                    ['Situação', 'Total de obras'],
-                    ['Concluídas', 11],
-                    ['Andamento', 29],
-                    ['Paralizadas', 2]
-                  ]}
-                  options={{
-                    is3D: true,
-                  }}
+                  chartType={modelo.tipo}
+                  data={modelo.data}
+                  options={modelo.options}
                 />
               </div>
-              <div className="each-slide">
-                <h5>Total de obras por ano</h5>
-                <Chart
-                  chartType="Bar"
-                  data={[
-                    ['Ano', 'Total'],
-                    ['2014', 100],
-                    ['2015', 117],
-                    ['2016', 66],
-                    ['2017', 103],
-                  ]}
-                />
-              </div>
-              <div className="each-slide">
-                <h5>Total de obras por categoria</h5>
-                <Chart
-                  chartType="PieChart"
-                  data={[
-                    ['Categoria', 'Total'],
-                    ['Saúde', 11],
-                    ['Educação', 2],
-                    ['Ass. social', 2],
-                    ['Urbanismo', 2],
-                    ['Administ.', 7],
-                  ]}
-                  options={{
-                    pieHole: 0.4,
-                  }}
-
-                />
-              </div>
+              )}
             </Slide>
           </div>
         </CardBody>
