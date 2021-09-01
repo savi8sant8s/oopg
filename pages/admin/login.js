@@ -13,6 +13,7 @@ import { formVazio } from "../../services/form-vazio";
 import { mostrarAlerta } from "../../services/alerta-padrao";
 import { STATUS } from "../../services/codigo-status";
 import { schema } from "../../services/schemas";
+import Swal from "sweetalert2";
 
 export default class AdminLogin extends Component {
 
@@ -20,13 +21,11 @@ export default class AdminLogin extends Component {
         super(props);
         this.state = {
             email: "",
-            senha: "",
-            spinner: false
+            senha: ""
         };
         this.onLogin = this.onLogin.bind(this);
         this.onIndicarPreenchimentoCorreto = this.onIndicarPreenchimentoCorreto.bind(this);
         this.onManipularMudanca = this.onManipularMudanca.bind(this);
-        this.toggleSpinner = this.toggleSpinner.bind(this);
     }
 
     onManipularMudanca(event) {
@@ -45,20 +44,16 @@ export default class AdminLogin extends Component {
         }
     }
 
-    toggleSpinner() {
-        this.setState({ spinner: !this.state.spinner })
-    }
-
     onLogin() {
-        let corpo = {email: this.state.email, senha: this.state.senha};
-        schema.login.validate(corpo).then(() => {
-            this.toggleSpinner();
-            axios.post("/api/v1/private/login", corpo).then((res) => {
-                this.toggleSpinner();
+        schema.login.validate(this.state).then(() => {
+            Swal.showLoading();
+            axios.post("/api/v1/private/login", this.state).then((res) => {
+                Swal.hideLoading();
                 let resposta = res.data;
                 switch (resposta.status) {
                     case STATUS.ADMIN.LOGIN_SUCESSO:
-                        window.location.href = "/home";
+                        sessionStorage.setItem("oopgV1Token", resposta.token);
+                        window.location.href = "/admin/home";
                         break;
                     case STATUS.ADMIN.LOGIN_PRIMEIRO_ACESSO:
                         mostrarAlerta('Primeiro acesso', 'Defina uma nova senha por questçoes de segurança.');
@@ -76,14 +71,14 @@ export default class AdminLogin extends Component {
                 mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
             });
         }).catch((erro) => {
-            this.onIndicarPreenchimentoCorreto(erro, corpo);
+            this.onIndicarPreenchimentoCorreto(erro, this.state);
         });
     }
 
     render() {
         return (
             <div className="container-fluid row d-flex justify-content-center">
-                <Card className="row col-sm-6 p-3">
+                <Card className="row col-sm-6 p-3" style={{marginTop: "10rem"}}>
                     <CardTitle className="h3 text-center">Login</CardTitle>
                     <CardBody>
                         <FormGroup className="mt-3">
