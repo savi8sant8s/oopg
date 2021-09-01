@@ -1,61 +1,182 @@
 import React, { Component } from 'react';
-import { 
-  TabContent, 
-  TabPane, 
-  Nav, 
-  NavItem, 
-  NavLink, 
-  FormGroup, 
-  Label, 
-  Input, 
+import {
+  TabContent,
+  TabPane,
+  Nav,
+  NavLink,
+  Card,
+  CardHeader,
+  CardBody,
   Button,
+  FormGroup,
+  Label,
+  Input,
   Table,
   Modal,
   ModalHeader,
   ModalBody
 } from 'reactstrap';
-import { DiAndroid, DiBrackets } from "react-icons/di"
-import ImportarPlanilha from "../../components/importar-planilha";
-import { FaPen } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
-import Swal from 'sweetalert2';
-import { schema } from '../../services/schemas';
-import { formVazio } from "../../services/form-vazio";
-import { mostrarAlerta } from '../../services/alerta-padrao';
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import readXlsxFile from 'read-excel-file';
 import axios from 'axios';
+import { schema } from '../../services/schemas';
+import { mostrarAlerta } from '../../services/alerta-padrao';
+import { formVazio } from "../../services/form-vazio";
+import Swal from 'sweetalert2';
 import { STATUS } from '../../services/codigo-status';
 
-function ObrasListar() {
-  return (
-    <div>
-      <DiAndroid size="50px"/>
-    </div>
-  )
-}
+class ImportarPlanilha extends Component {
 
-function ObrasCadastrar() {
-  return (
-    <div>
-      <ImportarPlanilha />
-    </div>
-  )
-}
+  constructor(props) {
+    super(props);
+    this.state = {
+      countConstructions: 0,
+      constructions: []
+    }
+    this.onReadSheet = this.onReadSheet.bind(this);
+    this.onCadastrarObras = this.onCadastrarObras.bind(this);
+  }
 
-function Noticias() {
-  return (
-    <div>
-      pag de noticia
-    </div>
-  )
+  async onCadastrarObras() {
+    let corpo = this.state.constructions;
+    schema.obras.validate(corpo).then(() => {
+      Swal.showLoading();
+      let token = sessionStorage.getItem("oopgV1Token");
+      let config = {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      }
+      axios.post("/api/v1/private/obras", corpo, config).then((res) => {
+        Swal.hideLoading();
+        let resposta = res.data;
+        switch (resposta.status) {
+          case STATUS.OBRA.CRIADAS_SUCESSO:
+            mostrarAlerta('Sucesso', 'Obras cadastradas com sucesso.');
+            break;
+          case STATUS.ERRO.PROBLEMA_INESPERADO:
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+            break;
+          case STATUS.SESSAO.TOKEN_INDEFINIDO:
+            mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+            mostrarAlerta('Acesso não permitido', 'Você ainda não realizou o primeiro acesso.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.CORPO.CAMPOS_INCORRETOS:
+            mostrarAlerta('Campos incorretos', 'Verifique o preenchimento dos campos.');
+            break;
+          case STATUS.SESSAO.TOKEN_INVALIDO:
+            mostrarAlerta('Token inválido', 'Faça login novamente.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          default:
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+        }
+      }).catch(() => {
+        mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+      });
+    }).catch((erro) => {
+      console.log(erro);
+      this.onIndicarPreenchimentoCorreto(erro, corpo);
+    });
+  }
+
+  onIndicarPreenchimentoCorreto(erro, corpo) {
+    if (formVazio(corpo)) {
+      mostrarAlerta('Formulário não preenchido', 'Digite email e senha.');
+    }
+    else if (erro.path) {
+      mostrarAlerta('Campo incorreto','Existe algum campo na planilha preenchido de forma incorreta.');
+    }
+  }
+
+  onReadSheet(event) {
+    readXlsxFile(event.target.files[0]).then((rows) => {
+      rows = rows.slice(1,rows.length+1);
+      rows = this.transformToArrayObject(rows);
+      this.setState({countConstructions: rows.length});
+      this.setState({constructions: rows});
+    });
+  }
+
+  transformToArrayObject(rows){
+    let arrayObject = [];
+    for(let x = 0; x < rows.length; x++){
+      arrayObject[x] = {
+        numeroLicitacao: rows[x][0],
+        descricao: rows[x][1], 
+        convenioNumeroAno: rows[x][2], 
+        convenioConcedente: rows[x][3],
+        convenioRepasse: rows[x][4], 
+        convenioContrapartida: rows[x][5], 
+        contratadoCpfCnpj: rows[x][6], 
+        contratadoRazaoSocial: rows[x][7], 
+        contratoNumeroAno: rows[x][8], 
+        contratoDataInico: rows[x][9], 
+        contratoPrazo: rows[x][10], 
+        contratoValorContratado: rows[x][11], 
+        contratoDataConclusao: rows[x][12], 
+        aditivoPrazoAditado: rows[x][13], 
+        aditivoValorAditado: rows[x][14], 
+        execucaoReajuste: rows[x][15],
+        execucaoNaturezaDespesa: rows[x][16], 
+        execucaoValorMedidoAcumulado: rows[x][17],
+        execucaoValorPagoAcumuladoPeriodo: rows[x][18], 
+        execucaoValorPagoAcumuladoExercicio: rows[x][19], 
+        valorPagoAcumulado: rows[x][20],
+        situacao: rows[x][21],
+        categoria: rows[x][22]
+      }
+    }
+    return arrayObject;
+  }
+
+  render() {
+    return (
+      <>
+      <div className="form-group text-center mt-5">
+        <label>Selecione um arquivo:</label>
+        <input id="file" accept=".xlsx" onChange={this.onReadSheet} type="file" className="form-control-file" />
+      </div>
+      {this.state.countConstructions != 0 ?
+        <>
+         <Button className="mt-5" onClick={this.onCadastrarObras}>Cadastrar {this.state.countConstructions} obras</Button>
+        </>
+         :
+         <>
+         <Card className="mt-5">
+             <CardHeader>
+               <AiOutlineInfoCircle size="30px" color="black" />
+               <br></br><label style={{ color: "black" }}>Observação</label>
+             </CardHeader>
+             <CardBody>
+               <p className="text-justify">
+                 É necessário seguir o modelo abaixo em Excel para cadastro das obras em massa.
+               </p>
+               <a href="../Modelo de planilha de informações de obras públicas.xlsx" download target="_blank">Baixar modelo em Excel</a>
+             </CardBody>
+           </Card>
+         </>
+       }
+       </>
+    )
+  }
 }
 
 class AdminCriar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      nome: this.props.nome ? this.props.nome : "",
-      email: this.props.email ? this.props.email : "",
-      funcao: this.props.funcao ? this.props.funcao : ""
+      nome: "",
+      email: "",
+      funcao: ""
     };
     this.onManipularMudanca = this.onManipularMudanca.bind(this);
     this.onCadastrar = this.onCadastrar.bind(this);
@@ -83,20 +204,21 @@ class AdminCriar extends Component {
 
   onCadastrar() {
     let corpo = { nome: this.state.nome, funcao: this.state.funcao, email: this.state.email }
+    let token = sessionStorage.getItem("oopgV1Token");
     let config = {
       headers: {
-        'Authorization': 'Bearer ' + "2kt3R6AhdufyInNoARQ9qcYIlozM9I"
+        'Authorization': 'Bearer ' + token
       }
-    }
+    };
     schema.admin.validate(corpo).then(() => {
+      Swal.showLoading();
       axios.post("/api/v1/private/admin", corpo, config).then((res) => {
+        Swal.hideLoading();
         let resposta = res.data;
         switch (resposta.status) {
           case STATUS.ADMIN.CRIADO_SUCESSO:
-            mostrarAlerta("Sucesso", "Admin cadastrado com sucesso");
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
+            mostrarAlerta("Admin cadastrado com sucesso", `Senha temporária: ${resposta.primeiroAcesso.senhaTemporaria}`);
+            window.location.reload();
             break;
           case STATUS.ADMIN.JA_CADASTRADO:
             mostrarAlerta('Admin já cadastrado', 'Este Admin já está cadastrado.');
@@ -106,6 +228,13 @@ class AdminCriar extends Component {
             break;
           case STATUS.SESSAO.TOKEN_INVALIDO:
             mostrarAlerta('Token inválido', 'Token inválido');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.SESSAO.TOKEN_INDEFINIDO:
+            mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
             break;
           case STATUS.ADMIN.OPERACAO_NAO_PERMITIDA:
             mostrarAlerta('Operação não permitida', 'Não é possível manipular admin');
@@ -144,21 +273,27 @@ class AdminCriar extends Component {
           </Input>
         </FormGroup>
         <div className="mt-3 text-center">
-          <Button onClick={this.onCadastrar} color="primary" size="lg">Cadastrar novo admin</Button>
+          <Button onClick={this.onCadastrar} color="primary" size="lg">Criar</Button>
         </div>
       </>
     )
   }
 }
 
-class AdminListar extends Component {
+class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false
+      modal: false,
+      admins: []
     }
+    this.onPegarAdmins = this.onPegarAdmins.bind(this);
     this.onDeletarAdmin = this.onDeletarAdmin.bind(this);
     this.onMostrarModal = this.onMostrarModal.bind(this);
+  }
+
+  componentDidMount(){
+    this.onPegarAdmins();
   }
 
   onMostrarModal(){
@@ -173,15 +308,95 @@ class AdminListar extends Component {
       cancelButtonText: `Agora não`,
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire('Falta implementar.', '', 'success');
+        let token = sessionStorage.getItem("oopgV1Token");
+        let config = {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        };
+          Swal.showLoading();
+          axios.delete(`/api/v1/private/admin/${id}`, config).then((res) => {
+            Swal.hideLoading();
+            let resposta = res.data;
+            switch (resposta.status) {
+              case STATUS.ADMIN.DELETADO_SUCESSO:
+                mostrarAlerta("Sucesso", "Admin deletado com sucesso");
+                window.location.reload();
+                break;
+              case STATUS.ADMIN.NAO_EXISTE:
+                mostrarAlerta('Admin não existe', 'Este Admin não existe.');
+                break;
+              case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+                mostrarAlerta('Admin não realizou o primeiro acesso', 'Este Admin não realizou o primeiro acesso.');
+                break;
+              case STATUS.SESSAO.TOKEN_INVALIDO:
+                mostrarAlerta('Token inválido', 'Token inválido');
+                sessionStorage.removeItem("oopgV1Token");
+                window.location.href = "/admin/login";
+                break;
+              case STATUS.SESSAO.TOKEN_INDEFINIDO:
+                mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+                sessionStorage.removeItem("oopgV1Token");
+                window.location.href = "/admin/login";
+                break;
+              case STATUS.ADMIN.OPERACAO_NAO_PERMITIDA:
+                mostrarAlerta('Operação não permitida', 'Não é possível manipular admin');
+                break;
+              case STATUS.CORPO.CAMPOS_INCORRETOS:
+                mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
+                break;
+              default:
+                mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+            }
+          }).catch((e) => {
+            console.log(e)
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+          });
       } 
     })
+  }
+
+  onPegarAdmins(){
+    let token = sessionStorage.getItem("oopgV1Token");
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    };
+      Swal.showLoading();
+      axios.get(`/api/v1/private/admins`, config).then((res) => {
+        Swal.hideLoading();
+        let resposta = res.data;
+        switch (resposta.status) {
+          case STATUS.ADMIN.SUCESSO:
+            this.setState({admins: resposta.admins});
+            break;
+          case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+            mostrarAlerta('Admin não realizou o primeiro acesso', 'Este Admin não realizou o primeiro acesso.');
+            break;
+          case STATUS.SESSAO.TOKEN_INVALIDO:
+            mostrarAlerta('Token inválido', 'Token inválido');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.SESSAO.TOKEN_INDEFINIDO:
+            mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          default:
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+        }
+      }).catch(() => {
+        mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+      });
   }
 
   render() {
     return (
       <>
-        <Table>
+        <Button size="lg" onClick={()=>{this.onMostrarModal()}}>Novo admin</Button>
+        <Table className="mt-5">
           <thead>
             <tr>
               <th>Nome</th>
@@ -191,21 +406,22 @@ class AdminListar extends Component {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Sávio Santos</td>
-              <td>savio@email.com</td>
-              <td>GERAL</td>
-              <td>
-                <FaPen onClick={()=>{this.onMostrarModal()}} className="m-2" size="20" />
-                <TiDelete onClick={()=>{this.onDeletarAdmin(1, "Irineu")}} className="m-2" size="20" />
-              </td>
-            </tr>
+            {this.state.admins.map((admin, x) =>
+              <tr key={x}>
+                <td>{admin.nome}</td>
+                <td>{admin.email}</td>
+                <td>{admin.funcao}</td>
+                <td>
+                  <TiDelete onClick={() => { this.onDeletarAdmin(admin.id, admin.nome) }} className="m-2" size="20" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
         <Modal isOpen={this.state.modal} toggle={this.onMostrarModal}>
-        <ModalHeader>Alterar administrador</ModalHeader>
+        <ModalHeader>Criar administrador</ModalHeader>
         <ModalBody>
-          <AdminCriar nome="Fulano de tal" email="fulano@gmail.com" funcao="SUPORTE" />
+          <AdminCriar />
         </ModalBody>
       </Modal>
         </>
@@ -213,127 +429,94 @@ class AdminListar extends Component {
   }
 }
 
-
-class Admin extends Component {
+export default class AdminHome extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      abaAtual: "1"
+      tab: "1"
     };
-    this.setAbaAtual = this.setAbaAtual.bind(this);
+    this.onDefinirTabAtual = this.onDefinirTabAtual.bind(this)
   }
 
-  setAbaAtual(tab) {
-    this.setState({ abaAtual: tab });
+  onDefinirTabAtual(tab) {
+    this.setState({ tab: tab })
+  }
+
+  onLogout() {
+    let token = sessionStorage.getItem("oopgV1Token");
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    };
+    Swal.fire({
+      title: 'Deseja realmente sair?',
+      showCancelButton: true,
+      confirmButtonText: `Sim`,
+      cancelButtonText: `Agora não`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post("/api/v1/private/logout", {}, config).then((res) => {
+          let resposta = res.data;
+          switch (resposta.status) {
+            case STATUS.ADMIN.LOGOUT_SUCESSO:
+              mostrarAlerta('Sucesso', 'Sessão finalizada.');
+              sessionStorage.removeItem("oopgV1Token");
+              window.location.href = "/";
+              break;
+            case STATUS.ERRO.PROBLEMA_INESPERADO:
+              mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+              break;
+            case STATUS.SESSAO.TOKEN_INDEFINIDO:
+              mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+              sessionStorage.removeItem("oopgV1Token");
+              window.location.href = "/admin/login";
+              break;
+            case STATUS.SESSAO.TOKEN_INVALIDO:
+              mostrarAlerta('Token inválido', 'Faça login novamente.');
+              sessionStorage.removeItem("oopgV1Token");
+              window.location.href = "/admin/login";
+              break;
+            default:
+              mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+          }
+        }).catch(() => {
+          mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+        });
+      } 
+    })
   }
 
   render() {
     return (
-      <>
-        <Nav tabs className="d-flex justify-content-around">
-          <NavItem >
-            <NavLink onClick={() => { this.setAbaAtual('1'); }}>
-              <h4>Adicionar</h4>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-          </NavItem>
-          <NavItem>
-            <NavLink onClick={() => { this.setAbaAtual('2'); }}>
-              <h4>Todos</h4>
-            </NavLink>
-          </NavItem>
+      <div>
+        <Nav tabs>
+          <NavLink onClick={() => { this.onDefinirTabAtual('1') }}>
+            <h4 className="text-dark">Administrador</h4>
+          </NavLink>
+          <NavLink onClick={() => { this.onDefinirTabAtual('2') }}>
+            <h4 className="text-dark">Noticias</h4>
+          </NavLink>
+          <NavLink onClick={() => { this.onDefinirTabAtual('3') }}>
+            <h4 className="text-dark">Obras</h4>
+          </NavLink>
+          <NavLink onClick={() => { this.onLogout() }}>
+            <h4 className="text-danger">Sair</h4>
+          </NavLink>
         </Nav>
-        <TabContent activeTab={this.state.abaAtual}>
-          <TabPane tabId="1">
-            <AdminCriar />
+        <TabContent activeTab={this.state.tab} className="container-fluid d-flex justify-content-center text-center">
+          <TabPane tabId="1" className="mt-5">
+            <Admin />
           </TabPane>
-          <TabPane tabId="2">
-            <AdminListar />
+          <TabPane tabId="2" className="mt-5">
+            <h3>Cadastro de obras</h3>
+            <ImportarPlanilha />
+          </TabPane>
+          <TabPane tabId="3" className="mt-5">
           </TabPane>
         </TabContent>
-      </>
-    )
-  }
-}
-
-export default class home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { 
-      toggle: "3",
-      toggle2: "1" };
-    this.onToggle = this.onToggle.bind(this)
-  }
-
-  onToggle(tab) {
-    this.setState({ toggle: tab })
-  }
-
-  onToggle2(tab) {
-    this.setState({ toggle2: tab })
-  }
-
-  render() {
-    return (
-      <div className="nav justify-content-center">
-        <div>
-          <Nav tabs style={{ marginBottom: "10px", marginTop: "50px" }}>
-            <NavItem >
-              <NavLink style={{ paddingLeft: "100px", paddingRight: "100px" }} onClick={() => { this.onToggle('1'); }}>
-                <h4 style={{ color: "black" }}>Obras</h4>
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink style={{ paddingLeft: "100px", paddingRight: "100px" }} onClick={() => { this.onToggle('2'); }}>
-                <h4 style={{ color: "black" }}>Noticias</h4>
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink style={{ paddingLeft: "100px", paddingRight: "100px" }} onClick={() => { this.onToggle('3'); }}>
-                <h4 style={{ color: "black" }}>Administrador</h4>
-              </NavLink>
-            </NavItem>
-          </Nav>
-          <TabContent activeTab={this.state.toggle}>
-            <TabPane tabId="1">
-              <div>
-                <Nav tabs style={{ marginBottom: "10px", marginTop: "50px" }}>
-                  <NavItem >
-                    <NavLink style={{alignContent:"center"}} onClick={() => { this.onToggle2('1'); }}>
-                      <h5 style={{ color: "black" }}>Obras Cadastradas</h5>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink style={{alignContent:"center"}} onClick={() => { this.onToggle2('2'); }}>
-                      <h5 style={{ color: "black" }}>Cadastrar Obras</h5>
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-                <TabContent activeTab={this.state.toggle2}>
-                  <TabPane tabId="1">
-                    <ObrasListar />
-                  </TabPane>
-                  <TabPane tabId="2">
-                    <ObrasCadastrar />
-                  </TabPane>
-                </TabContent>
-              </div>
-            </TabPane>
-            <TabPane tabId="2">
-              <Noticias />
-            </TabPane>
-            <TabPane tabId="3">
-              <Admin />
-            </TabPane>
-          </TabContent>
-        </div>
       </div>
     );
   }
 }
-
-
-
-

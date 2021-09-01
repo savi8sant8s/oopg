@@ -47,7 +47,6 @@ export const schema = {
     situacao: yup.string().matches(/^(CONCLUIDO|ANDAMENTO|PARALIZADO)$/).required(),
     categoria: yup.string().matches(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|ADMINISTRACAO|URBANISMO)$/).required()
   }),
-  obras: yup.object({
     obras: yup.array().of(yup.object(
       {
         numeroLicitacao: yup.string().required(),
@@ -74,8 +73,7 @@ export const schema = {
         situacao: yup.string().matches(/^(CONCLUIDO|ANDAMENTO|PARALIZADO)$/).required(),
         categoria: yup.string().matches(/^(SAUDE|EDUCACAO|ASSISTENCIASOCIAL|ADMINISTRACAO|URBANISMO)$/).required()
       })
-    ).required()
-  }),
+    ).required(),
   admin: yup.object({
     nome: yup.string().matches(/^[a-zA-ZàáâãèéêìíîòóôõùúûýçÀÁÂÃÈÉÊÌÍÎÒÓÔÕÙÚÛÝÇ ]{5,50}$/).required(),
     funcao: yup.string().matches(/^(GERAL|SUPORTE)$/).required(),
