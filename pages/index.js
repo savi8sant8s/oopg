@@ -56,8 +56,8 @@ class Graficos extends Component {
         </CardHeader>
         <CardBody>
           <div className="d-flex justify-content-around">
-          <p>Total de obras: <span class="badge bg-secondary">{this.state.qntObras}</span></p>
-          <p>Total Gasto: <span class="badge bg-secondary"> R$ {this.state.gastoTotal}</span></p>
+          <p>Total de obras: <span className="badge bg-secondary">{this.state.qntObras}</span></p>
+          <p>Total Gasto: <span className="badge bg-secondary"> R$ {this.state.gastoTotal}</span></p>
           </div>
           <div className="slide-container text-center mt-3" style={{ paddingTop: "60px" }}>
             <Slide indicators={true}>

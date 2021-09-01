@@ -29,6 +29,7 @@ export default capturarExcecoes(
             resposta.status = STATUS.ADMIN.ALTERADO_SUCESSO;
         }
         else if (req.method == "DELETE") {
+            await prisma.sessao.delete({where: { id: adminId },})
             await prisma.admin.delete({ where: { id: adminId } });
             resposta.status = STATUS.ADMIN.DELETADO_SUCESSO;
         }
