@@ -1,17 +1,17 @@
 import { Component } from "react";
 import { Slide } from 'react-slideshow-image';
 import { Chart } from "react-google-charts";
-import Link from 'next/link';
 
 import { 
     Card, 
     CardHeader, 
     CardBody, 
     Row, 
-    CardTitle,
     Col,
     Container,
-    NavLink
+    NavLink,
+    ListGroup,
+    ListGroupItem
  } from "reactstrap";
  import axios from "axios";
 import ModeloGrafico from "../services/modelo-grafico";
@@ -26,6 +26,7 @@ class Graficos extends Component {
       modelos: []
     };
   }
+
   async componentDidMount(){
     let baseUrl = "api/v1/public/estatisticas/obras";
     let modelos = this.state.modelos;
@@ -49,21 +50,19 @@ class Graficos extends Component {
 
   render() {
     return (
-      <Card className="mt-3" style={{ height: "40vh" }}>
-        <CardHeader className="text-center">Dados do Observatório</CardHeader>
+      <Card className="mt-3" style={{ margin: "auto", minHeight: "50vh" }}>
+        <CardHeader className="text-center">
+          <h4>Dados do Observatório</h4>
+        </CardHeader>
         <CardBody>
-          <Row>
-            <Col>
-              <span className="badge bg-success"><strong>Total de obras:</strong> {this.state.qntObras}</span>
-            </Col>
-            <Col>
-              <span className="badge bg-warning"><strong>Total Gasto:</strong> R$ {this.state.gastoTotal}</span>
-            </Col>
-          </Row>
-          <div className="slide-container text-center mt-3">
+          <div className="d-flex justify-content-around">
+          <p>Total de obras: <span class="badge bg-secondary">{this.state.qntObras}</span></p>
+          <p>Total Gasto: <span class="badge bg-secondary"> R$ {this.state.gastoTotal}</span></p>
+          </div>
+          <div className="slide-container text-center mt-3" style={{ paddingTop: "60px" }}>
             <Slide indicators={true}>
               {this.state.modelos.map((modelo, x)=>
-                <div className="each-slide">
+                <div className="each-slide" key={x}>
                 <h5>Situação das obras</h5>
                 <Chart
                   chartType={modelo.tipo}
@@ -82,74 +81,82 @@ class Graficos extends Component {
 
 class Categorias extends Component {
 
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
+    this.baseUrl = "/obras?categoria=";
+    this.recente = "&ordenar=recente";
+    this.state = {
+      categorias: [
+        {
+          nome: "Administração",
+          url: `${this.baseUrl}administracao${this.recente}`,
+          icone: "./administracao.png"
+        },
+        {
+          nome: "Assistência social",
+          url: `${this.baseUrl}assistenciasocial${this.recente}`,
+          icone: "./assistenciasocial.png"
+        },
+        {
+          nome: "Educação",
+          url: `${this.baseUrl}educacao${this.recente}`,
+          icone: "./educacao.png"
+        },
+        {
+          nome: "Saúde",
+          url: `${this.baseUrl}saude${this.recente}`,
+          icone: "./saude.png"
+        },
+        {
+          nome: "Urbanismo",
+          url: `${this.baseUrl}urbanismo${this.recente}`,
+          icone: "./urbanismo.png"
+        },
+        {
+          nome: "Todas",
+          url: `/obras?ordenar=recente`,
+          icone: "./todas.png"
+        }
+      ]
     }
+  }
 
-    render() {
-        return (
-            <Card className="text-center mt-3" style={{height: "40vh", margin: "auto"}}>
-                <CardHeader>
-                    <CardTitle>Selecione uma categoria</CardTitle>
-                </CardHeader>
-                <CardBody>
-                    <Row>
-                        <Col className="m-3">
-                            <Link href={"/obras?categoria=saude&ordenar=recente"}>
-                              Saúde
-                            </Link>
-                        </Col>
-                        <Col className="m-3">
-                            <Link href={"/obras?categoria=educacao&ordenar=recente"}>
-                            Educação
-                            </Link>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className="m-3">
-                          <Link href={"/obras?categoria=assistenciasocial&ordenar=recente"}>
-                          Assistência Social
-                            </Link>
-                        </Col>
-                        <Col className="m-3">
-                          <Link href={"/obras?categoria=administracao&ordenar=recente"}>
-                          Administração
-                            </Link>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className="m-3">
-                          <Link href={"/obras?categoria=urbanismo&ordenar=recente"}>
-                            Urbanismo
-                            </Link>
-                        </Col>
-                        <Col className="m-3">
-                          <Link href={"/obras?ordenar=recente"}>
-                          Todas
-                            </Link>
-                        </Col>
-                    </Row>
-                </CardBody>
-            </Card>
-        )
-    }
+  render() {
+    return (
+      <Card className="text-center mt-3" style={{ margin: "auto", minHeight: "50vh" }}>
+        <CardHeader>
+          <h4>Selecione Categoria</h4>
+        </CardHeader>
+        <div style={{marginTop: "auto", marginBottom: "auto"}}>
+          <ListGroup>
+            {this.state.categorias.map((categoria, x)=>
+            <ListGroupItem onClick={()=>window.location.href= categoria.url} className="d-flex justify-content-between" key={x}>
+              <label>{categoria.nome}</label>
+              <img src={categoria.icone} width="50" height="50"></img>
+            </ListGroupItem>
+            )}
+          </ListGroup>
+        </div>
+      </Card>
+    )
+  }
 }
 
 class Avaliacao extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
   }
 
-  render(){
+  render() {
     const styles = {
-      backgroundColor: "#fbb034", 
+      backgroundColor: "#fbb034",
       backgroundImage: "linear-gradient(315deg, #fbb034 0%, #ffdd00 74%)"
     };
 
     return (
       <div style={styles} className="text-center">
-        <NavLink href="#" style={{color: "white"}}>Avalie o observatório!!</NavLink>
-    </div>
+        <NavLink href="#" style={{ color: "white" }}>Avalie o observatório!!</NavLink>
+      </div>
     )
   }
 }
@@ -158,24 +165,24 @@ class Noticias extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      noticias:[]
+      noticias: []
     }
   }
-  async componentDidMount(){
-    let {data} = await axios.get("api/v1/public/noticias?quant=3");
-    this.setState({noticias: data.noticias});
+  async componentDidMount() {
+    let { data } = await axios.get("api/v1/public/noticias?quant=3");
+    this.setState({ noticias: data.noticias });
   }
 
   render() {
     return (
       <div className="slide-container text-center mt-3">
         <Slide indicators={true}>
-          {this.state.noticias.map((noticia, x)=>
+          {this.state.noticias.map((noticia, x) =>
             <div className="each-slide" key={x}>
-            <p>{noticia.titulo}</p>
-            <img src={noticia.imagemUrl} onClick={()=>{window.location.href=noticia.link}} />
-          </div>
-          )}          
+              <p>{noticia.titulo}</p>
+              <img src={noticia.imagemUrl} onClick={() => { window.location.href = noticia.link }} />
+            </div>
+          )}
         </Slide>
       </div>
     )
@@ -192,7 +199,7 @@ export default class paginainicial extends Component {
       <div>
         <Avaliacao />
         <Noticias />
-        <Container>
+        <Container >
           <Row>
             <Col sm="6">
               <Categorias />

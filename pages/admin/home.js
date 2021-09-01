@@ -14,11 +14,16 @@ import {
   ModalHeader,
   ModalBody
 } from 'reactstrap';
-import { DiAndroid } from "react-icons/di"
+import { DiAndroid, DiBrackets } from "react-icons/di"
 import ImportarPlanilha from "../../components/importar-planilha";
 import { FaPen } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import Swal from 'sweetalert2';
+import { schema } from '../../services/schemas';
+import { formVazio } from "../../services/form-vazio";
+import { mostrarAlerta } from '../../services/alerta-padrao';
+import axios from 'axios';
+import { STATUS } from '../../services/codigo-status';
 
 function ObrasListar() {
   return (
@@ -60,8 +65,63 @@ class AdminCriar extends Component {
     this.setState({ [event.target.name]: event.target.value });
   }
 
+  onIndicarPreenchimentoCorreto(erro, corpo) {
+    if (formVazio(corpo)) {
+      mostrarAlerta('Formulário não preenchido', 'Digite o nome, funcão e email.');
+    }
+    else if (erro.path == "nome") {
+      mostrarAlerta('Nome inválido', 'O nome deve possuir entre 5 e 30 caracteres, sem números ou caracteres especiais.');
+    }
+
+    else if (erro.path == "funcao") {
+      mostrarAlerta('Função inválida', 'Selecione uma função');
+    }
+    else if (erro.path == "email") {
+      mostrarAlerta('Email inválido', 'Ex.: fulano@email.com.');
+    }
+}
+
   onCadastrar() {
-    Swal.fire("Precisa implementar.", '', 'info');
+    let corpo = { nome: this.state.nome, funcao: this.state.funcao, email: this.state.email }
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + "2kt3R6AhdufyInNoARQ9qcYIlozM9I"
+      }
+    }
+    schema.admin.validate(corpo).then(() => {
+      axios.post("/api/v1/private/admin", corpo, config).then((res) => {
+        let resposta = res.data;
+        switch (resposta.status) {
+          case STATUS.ADMIN.CRIADO_SUCESSO:
+            mostrarAlerta("Sucesso", "Admin cadastrado com sucesso");
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+            break;
+          case STATUS.ADMIN.JA_CADASTRADO:
+            mostrarAlerta('Admin já cadastrado', 'Este Admin já está cadastrado.');
+            break;
+          case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+            mostrarAlerta('Admin não realizou o primeiro acesso', 'Este Admin não realizou o primeiro acesso.');
+            break;
+          case STATUS.SESSAO.TOKEN_INVALIDO:
+            mostrarAlerta('Token inválido', 'Token inválido');
+            break;
+          case STATUS.ADMIN.OPERACAO_NAO_PERMITIDA:
+            mostrarAlerta('Operação não permitida', 'Não é possível manipular admin');
+            break;
+          case STATUS.CORPO.CAMPOS_INCORRETOS:
+            mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
+            break;
+          default:
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+        }
+      }).catch(() => {
+        mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+      });
+    }).catch((erro) => {
+      this.onIndicarPreenchimentoCorreto(erro, corpo);
+    });
   }
 
   render() {
@@ -78,6 +138,7 @@ class AdminCriar extends Component {
         <FormGroup className="mb-2">
           <Label>Função</Label>
           <Input onChange={this.onManipularMudanca} value={this.state.funcao} type="select" name="funcao">
+            <option>Selecione</option>
             <option value="SUPORTE">Suporte</option>
             <option value="GERAL">Geral</option>
           </Input>
