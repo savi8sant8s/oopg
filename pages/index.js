@@ -155,7 +155,7 @@ class Avaliacao extends Component {
 
     return (
       <div style={styles} className="text-center">
-        <NavLink href="#" style={{ color: "white" }}>Avalie o observatório!!</NavLink>
+        <NavLink href="/avaliacao" style={{ color: "white" }}>Avalie o observatório!!</NavLink>
       </div>
     )
   }
