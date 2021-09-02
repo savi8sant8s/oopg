@@ -31,15 +31,15 @@ class ImportarPlanilha extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      countConstructions: 0,
-      constructions: []
+      quantObras: 0,
+      obras: []
     }
     this.onReadSheet = this.onReadSheet.bind(this);
     this.onCadastrarObras = this.onCadastrarObras.bind(this);
   }
 
-  async onCadastrarObras() {
-    let corpo = this.state.constructions;
+  async onCadastrarObras() { 
+    let corpo = this.state.obras;
     schema.obras.validate(corpo).then(() => {
       Swal.showLoading();
       let token = sessionStorage.getItem("oopgV1Token");
@@ -48,7 +48,7 @@ class ImportarPlanilha extends Component {
           'Authorization': 'Bearer ' + token
         }
       }
-      axios.post("/api/v1/private/obras", corpo, config).then((res) => {
+      axios.post("/api/v1/private/obras", {obras: corpo}, config).then((res) => {
         Swal.hideLoading();
         let resposta = res.data;
         switch (resposta.status) {
@@ -101,8 +101,8 @@ class ImportarPlanilha extends Component {
     readXlsxFile(event.target.files[0]).then((rows) => {
       rows = rows.slice(1,rows.length+1);
       rows = this.transformToArrayObject(rows);
-      this.setState({countConstructions: rows.length});
-      this.setState({constructions: rows});
+      this.setState({quantObras: rows.length});
+      this.setState({obras: rows});
     });
   }
 
@@ -119,7 +119,7 @@ class ImportarPlanilha extends Component {
         contratadoCpfCnpj: rows[x][6], 
         contratadoRazaoSocial: rows[x][7], 
         contratoNumeroAno: rows[x][8], 
-        contratoDataInico: rows[x][9], 
+        contratoDataInicio: rows[x][9], 
         contratoPrazo: rows[x][10], 
         contratoValorContratado: rows[x][11], 
         contratoDataConclusao: rows[x][12], 
@@ -145,9 +145,9 @@ class ImportarPlanilha extends Component {
         <label>Selecione um arquivo:</label>
         <input id="file" accept=".xlsx" onChange={this.onReadSheet} type="file" className="form-control-file" />
       </div>
-      {this.state.countConstructions != 0 ?
+      {this.state.quantObras != 0 ?
         <>
-         <Button className="mt-5" onClick={this.onCadastrarObras}>Cadastrar {this.state.countConstructions} obras</Button>
+         <Button className="mt-5" onClick={this.onCadastrarObras}>Cadastrar {this.state.quantObras} obras</Button>
         </>
          :
          <>
@@ -452,8 +452,7 @@ class Noticias extends Component {
               default:
                 mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
             }
-          }).catch((e) => {
-            console.log(e)
+          }).catch((erro) => {
             mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
           });
       } 
@@ -574,8 +573,7 @@ class Admin extends Component {
               default:
                 mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
             }
-          }).catch((e) => {
-            console.log(e)
+          }).catch((erro) => {
             mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
           });
       } 

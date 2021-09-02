@@ -60,7 +60,7 @@ model Obra {
   convenioConcedente                  String?
   convenioRepasse                     Float?
   convenioContrapartida               Float?
-  contratadoCpfCcnpj                  String
+  contratadoCpfCnpj                   String
   contratadoRazaoSocial               String
   contratoNumeroAno                   String
   contratoDataInicio                  DateTime
