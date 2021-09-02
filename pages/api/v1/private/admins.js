@@ -1,13 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import { Validacao } from "../../../../services/validacao";
 import { STATUS } from "../../../../services/codigo-status";
-import { schema } from "../../../../services/schemas";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
-import randtoken from 'rand-token';
-import bcrypt from "bcrypt";
+import { PrismaSingleton } from "../../../../services/prisma-singleton";
 
-const prisma = new PrismaClient();
+const prisma = PrismaSingleton.pegarInstancia();
 
 export default capturarExcecoes(
     async (req, res) => {
