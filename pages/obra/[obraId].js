@@ -15,7 +15,8 @@ import {
 } from "reactstrap";
 import { GoogleLogin } from 'react-google-login';
 import axios from "axios";
-import moment from "moment";
+import moment from 'moment';
+moment.locale('pt-br');
 import { schema } from "../../services/schemas";
 import { STATUS } from "../../services/codigo-status";
 import { mostrarAlerta } from "../../services/alerta-padrao";

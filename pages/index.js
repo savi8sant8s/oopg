@@ -9,13 +9,15 @@ import {
     Row, 
     Col,
     Container,
-    NavLink,
     ListGroup,
-    ListGroupItem
+    Button
  } from "reactstrap";
  import axios from "axios";
 import ModeloGrafico from "../services/modelo-grafico";
 
+const styles = {
+  cardHeader: { background: "#ff2b32c4", color: "white" }
+}
 class Graficos extends Component {
 
   constructor(props) {
@@ -28,42 +30,35 @@ class Graficos extends Component {
   }
 
   async componentDidMount(){
-    let baseUrl = "api/v1/public/estatisticas/obras";
     let modelos = this.state.modelos;
     let modeloGrafico = new ModeloGrafico();
-
-    let res = await axios.get(`${baseUrl}/balanco`);
+    let res = await axios.get("api/v1/public/estatisticas");
     this.setState({qntObras: res.data.quantObras});
-    this.setState({gastoTotal: res.data.gastoTotal});
-
-    res = await axios.get(`${baseUrl}/situacao`);
+    let gastoTotal = res.data.gastoTotal.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+    this.setState({gastoTotal: gastoTotal});
     modelos.push(modeloGrafico.obrasPorSituacao(res.data));
-    res = await axios.get(`${baseUrl}/categoria`);
     modelos.push(modeloGrafico.obrasPorCategoria(res.data));
-    res = await axios.get(`${baseUrl}/ano`);
     modelos.push(modeloGrafico.obrasPorAno(res.data));
-    res = await axios.get(`${baseUrl}/gasto`);
     modelos.push(modeloGrafico.gastoObrasPorAno(res.data));
-
     this.setState({modelos: modelos});
   }
 
   render() {
     return (
-      <Card className="mt-3" style={{ margin: "auto", minHeight: "50vh" }}>
-        <CardHeader className="text-center">
+      <Card style={{minHeight: "50vh"}}>
+        <CardHeader style={styles.cardHeader}>
           <h4>Dados do Observatório</h4>
         </CardHeader>
         <CardBody>
           <div className="d-flex justify-content-around">
-          <p>Total de obras: <span className="badge bg-secondary">{this.state.qntObras}</span></p>
-          <p>Total Gasto: <span className="badge bg-secondary"> R$ {this.state.gastoTotal}</span></p>
+          <p>Total de obras: <span className="badge bg-warning">{this.state.qntObras}</span></p>
+          <p>Total investido: <span className="badge bg-warning"> {this.state.gastoTotal}</span></p>
           </div>
-          <div className="slide-container text-center mt-3" style={{ paddingTop: "60px" }}>
+          <div className="slide-container mt-3" style={{ paddingTop: "60px" }}>
             <Slide indicators={true}>
               {this.state.modelos.map((modelo, x)=>
                 <div className="each-slide" key={x}>
-                <h5>Situação das obras</h5>
+                <h5>{modelo.titulo}</h5>
                 <Chart
                   chartType={modelo.tipo}
                   data={modelo.data}
@@ -123,40 +118,21 @@ class Categorias extends Component {
 
   render() {
     return (
-      <Card className="text-center mt-3" style={{ margin: "auto", minHeight: "50vh" }}>
-        <CardHeader>
+      <Card style={{ minHeight: "50vh" }}>
+        <CardHeader style={{background: "#ff2b32c4", color: "white", color: "white"}}>
           <h4>Selecione Categoria</h4>
         </CardHeader>
-        <div style={{marginTop: "auto", marginBottom: "auto"}}>
+        <CardBody>
           <ListGroup>
             {this.state.categorias.map((categoria, x)=>
-            <ListGroupItem onClick={()=>window.location.href= categoria.url} className="d-flex justify-content-between" key={x}>
+            <Button onClick={()=>window.location.href= categoria.url} className="d-flex justify-content-between bg-white text-dark" key={x}>
               <label>{categoria.nome}</label>
               <img src={categoria.icone} width="50" height="50"></img>
-            </ListGroupItem>
+            </Button>
             )}
           </ListGroup>
-        </div>
+        </CardBody>
       </Card>
-    )
-  }
-}
-
-class Avaliacao extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const styles = {
-      backgroundColor: "#fbb034",
-      backgroundImage: "linear-gradient(315deg, #fbb034 0%, #ffdd00 74%)"
-    };
-
-    return (
-      <div style={styles} className="text-center">
-        <NavLink href="/avaliacao" style={{ color: "white" }}>Avalie o observatório!!</NavLink>
-      </div>
     )
   }
 }
@@ -175,20 +151,28 @@ class Noticias extends Component {
 
   render() {
     return (
-      <div className="slide-container text-center mt-3">
+      <Card style={{ minHeight: "50vh" }}>
+        <CardHeader style={styles.cardHeader}>
+          <h4>Últimas notícias</h4>
+        </CardHeader>
+        <CardBody>
+        <div className="slide-container mt-3">
         <Slide indicators={true}>
           {this.state.noticias.map((noticia, x) =>
             <div className="each-slide" key={x}>
               <p>{noticia.titulo}</p>
-              <img src={noticia.imagemUrl} onClick={() => { window.location.href = noticia.link }} />
+              <img src={noticia.imagemUrl} height="300px" width="300px" onClick={() => { window.location.href = noticia.link }} />
             </div>
           )}
         </Slide>
       </div>
+        </CardBody>
+      </Card>
     )
   }
 }
-export default class paginainicial extends Component {
+
+export default class Home extends Component {
 
   constructor(props) {
     super(props);
@@ -196,19 +180,20 @@ export default class paginainicial extends Component {
 
   render() {
     return (
-      <div>
-        <Avaliacao />
-        <Noticias />
-        <Container >
-          <Row>
-            <Col sm="6">
-              <Categorias />
-            </Col>
-            <Col sm="6">
+      <div className="container-fluid d-flex justify-content-center text-center">
+        <div className="row col-sm-8">
+          <Container className="pt-5">
               <Graficos />
-            </Col>
-          </Row>
-        </Container>
+            <Row>
+              <Col md="6" className="pt-5">
+                <Categorias />
+              </Col>
+              <Col md="6" className="pt-5">
+                <Noticias />
+              </Col>
+            </Row>
+          </Container>
+        </div>
       </div>
     )
   }

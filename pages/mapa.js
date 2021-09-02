@@ -1,6 +1,5 @@
 import { Component } from "react";
-import { Card, CardLink, CardText, CardBody, CardTitle, CardSubtitle, Button } from 'reactstrap';
-import { Table } from 'reactstrap';
+import { Container, CardSubtitle, Table, NavLink } from 'reactstrap';
 import styles from '../styles/mapa.module.css';
 
 export default class Mapa extends Component {
@@ -11,61 +10,63 @@ export default class Mapa extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <Card className="ms-3 me-3">
-            <CardBody>
-              <CardTitle className="text-center" tag="h5">Navegue pelo Observatório</CardTitle>
-              <CardSubtitle tag="h6" className="mb-2 mt-3 text-muted"><b>Menu</b></CardSubtitle>
-              <div className={styles.line}></div>
-              <Table borderless>                  
-                <tbody>
-                <tr>
-                    <th></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/"><b>Página inicial</b></a></td>
-                  </tr>                  
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/"><b>Todas as obras</b></a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Saúde</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Educação</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Assistência Social</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Administração</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Urbanismo</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/">Todas</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/"><b>Mapa do Observatório</b></a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"></th>
-                    <td><a className={styles.disableLink} href="https://www.google.com.br/"><b>Administrador</b></a></td>
-                  </tr>           
-                </tbody>
-              </Table>
-            </CardBody>
-          </Card>
-        </div>
-      </div>
+      <Container className="pt-5">
+        <h4 className="text-center">Navegue pelo Observatório</h4>
+        <CardSubtitle tag="h6" className="mb-2 mt-3 text-muted"><b>Menu</b></CardSubtitle>
+        <div className={styles.line}></div>
+        <Table borderless>
+          <tbody>
+            <tr>
+              <th></th>
+              <td><NavLink className="text-dark" href="/"><b>Página inicial</b></NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href="/noticias"><b>Notícias</b></NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href="/obras?ordenar=recente"><b>Obras</b></NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=saude"}>Saúde</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=educacao"}>Educação</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=assistenciasocial"}>Assistência Social</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=administracao"}>Administração</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=urbanismo"}>Urbanismo</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href={"/obras?ordenar=recente"}>Todas</NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href="/mapa"><b>Mapa do Observatório</b></NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href="/sobre"><b>Sobre</b></NavLink></td>
+            </tr>
+            <tr>
+              <th scope="row"></th>
+              <td><NavLink className="text-dark" href="/admin/login"><b>Administrador</b></NavLink></td>
+            </tr>
+          </tbody>
+        </Table>
+      </Container>
     )
   }
 }

@@ -28,7 +28,7 @@ export default capturarExcecoes(
             let quantidade = Number(req.query.quantidade);
             consulta.take = quantidade;
         }
-        if(req.query.ordenar){
+        if(req.query.ordenar && req.query.ordenar != 'undefined'){
             validar.tipoOrdem;
             let ordenar = req.query.ordenar.toUpperCase();
             let ordem = {
@@ -37,7 +37,7 @@ export default capturarExcecoes(
             }[ordenar];
             consulta.orderBy = {contratoDataInicio: ordem};
         }
-        if(req.query.categoria){
+        if(req.query.categoria && req.query.categoria != 'undefined'){
             validar.categoria;
             let categoria = req.query.categoria.toUpperCase();
             consulta.where = {

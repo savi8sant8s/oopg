@@ -1,21 +1,9 @@
 import { Component } from "react";
-import { CardBody, Card, CardTitle, CardHeader } from "reactstrap";
-import { FormGroup, Label, Col, Input } from "reactstrap";
-import { ListGroup, ListGroupItem } from "reactstrap";
+import { CardBody, Card, CardTitle, CardHeader, NavLink } from "reactstrap";
+import { FormGroup, Label, Col, Input, Table } from "reactstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
-
-const styles = {
-  obras: {
-    border:"2px",
-    marginTop:"3rem", 
-    overflow: "auto", 
-    maxHeight:"720px", 
-    alignContent: "center", 
-    fontSize:"20px", 
-    textAlign: "center"
-  }
-}
+import moment from "moment";
 
 class ListaObras extends Component {
   constructor(props){
@@ -48,13 +36,26 @@ class ListaObras extends Component {
 
   render(){
     return (
-      <div style={styles.obras}> 
+      <div className="text-center"> 
       {this.state.quantObras > 0 ? <h3>{this.state.quantObras} obras</h3> : <></> }  
-      <ListGroup>
-        {this.state.obras.map((obra, x) =>
-        <ListGroupItem key={x} tag="a" href={`/obra/${obra.id}`}>{obra.descricao.slice(0,70) + "..."}</ListGroupItem>
-        )}
-      </ListGroup>
+      <Table>
+      <thead>
+            <tr>
+              <th>Ano</th>
+              <th>Descrição</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.obras.map((obra, x) =>
+              <tr key={x}>
+                <td>{moment(obra.contratoDataInicio).format("YYYY")}</td>
+                <td>{obra.descricao.slice(0, 100) + "..."}</td>
+                <td><NavLink href={`/obra/${obra.id}`}>Ver mais</NavLink></td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
       </div>
     )
   }
@@ -144,7 +145,7 @@ export default class Obras extends Component {
   render() {
     return (
       <div className="container-fluid row d-flex justify-content-center">
-        <div className="row col-sm-6">
+        <div className="row col-sm-8">
           <Card className="mt-3">
             <CardHeader>
               <CardTitle className="text-center" tag="h5">Selecione uma obra</CardTitle>
