@@ -170,6 +170,113 @@ class ImportarPlanilha extends Component {
   }
 }
 
+class NoticiasCriar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      titulo: "",
+      mensagem: "",
+      imagemUrl: "",
+      link: ""
+    };
+    this.onManipularMudanca = this.onManipularMudanca.bind(this);
+    this.onCadastrar = this.onCadastrar.bind(this);
+  }
+
+  onManipularMudanca(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  onIndicarPreenchimentoCorreto(erro, corpo) {
+    if (formVazio(corpo)) {
+      mostrarAlerta('Formulário não preenchido', 'Digite o título, mensagem, imagemUrl e link.');
+    }
+    else if (erro.path == "titulo") {
+      mostrarAlerta('Título inválido', 'O título deve possuir entre 5 e 20 caracteres.');
+    }
+    else if (erro.path == "mensagem") {
+      mostrarAlerta('Título inválido', 'O título deve possuir entre 5 e 50 caracteres.');
+    }
+    else if (erro.path == "imagemUrl") {
+      mostrarAlerta('Imagem inválida', 'O título deve possuir entre 10 e 100 caracteres.');
+    }
+    else if (erro.path == "link") {
+      mostrarAlerta('Link inválido', 'O título deve possuir entre 5 e 100 caracteres.');
+    }
+}
+
+  onCadastrar() {
+    let corpo = this.state;
+    let token = sessionStorage.getItem("oopgV1Token");
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    };
+    schema.noticia.validate(corpo).then(() => {
+      Swal.showLoading();
+      axios.post("/api/v1/private/noticia", corpo, config).then((res) => {
+        Swal.hideLoading();
+        let resposta = res.data;
+        switch (resposta.status) {
+          case STATUS.NOTICIA.CRIADA_SUCESSO:
+            mostrarAlerta("Sucesso", "Notícia criada com sucesso");
+            window.location.reload();
+            break;
+          case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+            mostrarAlerta('Admin não realizou o primeiro acesso', 'Este Admin não realizou o primeiro acesso.');
+            break;
+          case STATUS.SESSAO.TOKEN_INVALIDO:
+            mostrarAlerta('Token inválido', 'Token inválido');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.SESSAO.TOKEN_INDEFINIDO:
+            mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+            sessionStorage.removeItem("oopgV1Token");
+            window.location.href = "/admin/login";
+            break;
+          case STATUS.CORPO.CAMPOS_INCORRETOS:
+            mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
+            break;
+          default:
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+        }
+      }).catch(() => {
+        mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+      });
+    }).catch((erro) => {
+      this.onIndicarPreenchimentoCorreto(erro, corpo);
+    });
+  }
+
+  render() {
+    return (
+      <>
+        <FormGroup className="mb-2">
+          <Label>Título:</Label>
+          <Input onChange={this.onManipularMudanca} value={this.state.titulo} type="text" name="titulo" />
+        </FormGroup>
+        <FormGroup className="mb-2">
+          <Label>Mensagem:</Label>
+          <Input onChange={this.onManipularMudanca} value={this.state.mensagem} type="text" name="mensagem" />
+        </FormGroup>
+        <FormGroup className="mb-2">
+          <Label>URL da imagem:</Label>
+          <Input onChange={this.onManipularMudanca} value={this.state.imagemUrl} type="url" name="imagemUrl" />
+        </FormGroup>
+        <FormGroup className="mb-2">
+          <Label>Link da notícia:</Label>
+          <Input onChange={this.onManipularMudanca} value={this.state.link} type="url" name="link" />
+        </FormGroup>
+        <div className="mt-3 text-center">
+          <Button onClick={this.onCadastrar} color="primary" size="lg">Criar</Button>
+        </div>
+      </>
+    )
+  }
+}
+
 class AdminCriar extends Component {
   constructor(props) {
     super(props);
@@ -203,7 +310,7 @@ class AdminCriar extends Component {
 }
 
   onCadastrar() {
-    let corpo = { nome: this.state.nome, funcao: this.state.funcao, email: this.state.email }
+    let corpo = this.state;
     let token = sessionStorage.getItem("oopgV1Token");
     let config = {
       headers: {
@@ -276,6 +383,125 @@ class AdminCriar extends Component {
           <Button onClick={this.onCadastrar} color="primary" size="lg">Criar</Button>
         </div>
       </>
+    )
+  }
+}
+
+class Noticias extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modal: false,
+      noticias: []
+    }
+    this.onPegarNoticias = this.onPegarNoticias.bind(this);
+    this.onDeletarNoticia = this.onDeletarNoticia.bind(this);
+    this.onMostrarModal = this.onMostrarModal.bind(this);
+  }
+
+  async componentDidMount(){
+    await this.onPegarNoticias();
+  }
+
+  onMostrarModal(){
+    this.setState({modal: !this.state.modal});
+  }
+
+  onDeletarNoticia(id){
+    Swal.fire({
+      title: `Deseja realmente deletar essa notícia?`,
+      showCancelButton: true,
+      confirmButtonText: `Deletar notícia`,
+      cancelButtonText: `Agora não`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let token = sessionStorage.getItem("oopgV1Token");
+        let config = {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        };
+          Swal.showLoading();
+          axios.delete(`/api/v1/private/noticia/${id}`, config).then((res) => {
+            Swal.hideLoading();
+            let resposta = res.data;
+            switch (resposta.status) {
+              case STATUS.NOTICIA.DELETADA_SUCESSO:
+                mostrarAlerta("Sucesso", "Notícia deletado com sucesso");
+                window.location.reload();
+                break;
+              case STATUS.NOTICIA.NAO_EXISTE:
+                mostrarAlerta('Notícia não existe', 'Esta notícia não existe.');
+                break;
+              case STATUS.ADMIN.NAO_REALIZOU_PRIMEIRO_ACESSO:
+                mostrarAlerta('Admin não realizou o primeiro acesso', 'Este Admin não realizou o primeiro acesso.');
+                break;
+              case STATUS.SESSAO.TOKEN_INVALIDO:
+                mostrarAlerta('Token inválido', 'Token inválido');
+                sessionStorage.removeItem("oopgV1Token");
+                window.location.href = "/admin/login";
+                break;
+              case STATUS.SESSAO.TOKEN_INDEFINIDO:
+                mostrarAlerta('Token não definido', 'Contate o mantenedor do site.');
+                sessionStorage.removeItem("oopgV1Token");
+                window.location.href = "/admin/login";
+                break;
+              case STATUS.CORPO.CAMPOS_INCORRETOS:
+                mostrarAlerta('Campos incorretos', 'Verifique o preenchimento do formulário.');
+                break;
+              default:
+                mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+            }
+          }).catch((e) => {
+            console.log(e)
+            mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
+          });
+      } 
+    })
+  }
+
+  async onPegarNoticias(){
+      Swal.showLoading();
+      let { data } = await axios.get(`/api/v1/public/noticias`);
+      Swal.hideLoading();
+      this.setState({noticias: data.noticias});
+  }
+
+  render() {
+    return (
+      <>
+        <Button size="lg" onClick={()=>{this.onMostrarModal()}}>Criar notícia</Button>
+        <Table className="mt-5">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Mensagem</th>
+              <th>URL da imagem</th>
+              <th>Link da notícia</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.noticias.map((noticia, x) =>
+              <tr key={x}>
+                <td>{noticia.titulo}</td>
+                <td>{noticia.mensagem}</td>
+                <td><a href={noticia.imagemUrl}target="_blank">Ver</a></td>
+                <td><a href={noticia.link} target="_blank">Ver</a></td>
+                <td>
+                  <TiDelete onClick={() => { this.onDeletarNoticia(noticia.id) }} className="m-2" size="20" />
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+        <Modal isOpen={this.state.modal} toggle={this.onMostrarModal}>
+        <ModalHeader>Criar notícia</ModalHeader>
+        <ModalBody>
+          <NoticiasCriar />
+        </ModalBody>
+      </Modal>
+        </>
     )
   }
 }
@@ -496,10 +722,10 @@ export default class AdminHome extends Component {
             <h4 className="text-dark">Administrador</h4>
           </NavLink>
           <NavLink onClick={() => { this.onDefinirTabAtual('2') }}>
-            <h4 className="text-dark">Noticias</h4>
+            <h4 className="text-dark">Obras</h4>
           </NavLink>
           <NavLink onClick={() => { this.onDefinirTabAtual('3') }}>
-            <h4 className="text-dark">Obras</h4>
+            <h4 className="text-dark">Noticias</h4>
           </NavLink>
           <NavLink onClick={() => { this.onLogout() }}>
             <h4 className="text-danger">Sair</h4>
@@ -514,6 +740,7 @@ export default class AdminHome extends Component {
             <ImportarPlanilha />
           </TabPane>
           <TabPane tabId="3" className="mt-5">
+            <Noticias />
           </TabPane>
         </TabContent>
       </div>
