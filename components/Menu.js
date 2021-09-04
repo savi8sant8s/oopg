@@ -1,10 +1,13 @@
 import { Component } from "react";
-import { HiMenu } from "react-icons/hi";
-import Avaliacao from "./Avaliacao";
+import {
+    Navbar,
+    Container,
+    Nav,
+} from "react-bootstrap";
 
 const styles = {
-    navBg: {
-        backgroundColor: "#ff2b32c4"
+    bg: {
+        background: "#ff2b32c4"
     }
 };
 
@@ -12,54 +15,30 @@ export default class Menu extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            menu: false
-        };
-        this.toggleMenu = this.toggleMenu.bind(this);
-    }
-
-    toggleMenu() {
-        this.setState({ menu: !this.state.menu })
     }
 
     render() {
-        const show = (this.state.menu) ? "show" : "";
-        
         return (
-           <>
-            <nav style={styles.navBg} className="navbar navbar-expand-lg navbar-light text-light">
-                <a className="navbar-brand text-white" href="/">
-                    <img className="m-lg-2 m-1" src="/logo.png" alt="" width="40" height="34" />
-                    <label className="text-wrap">Observatório de Obras Públicas de Garanhuns</label>
-                </a>
-                <button onClick={this.toggleMenu} className="navbar-toggler bg-light m-2" type="button" data-toggle="collapse" data-target="#navbarApp">
-                    <HiMenu color="red" size="30px" />
-                </button>
-                <div className={"collapse navbar-collapse justify-content-end " + show} id="navbarApp">
-                    <ul className="navbar-nav ms-auto">
-                        <li className="nav-item m-2">
-                            <a className="nav-link text-white" href="/">Início</a>
-                        </li>
-                        <li className="nav-item m-2">
-                            <a className="nav-link text-white" href="/noticias">Notícias</a>
-                        </li>
-                        <li className="nav-item m-2">
-                            <a className="nav-link text-white" href="/obras?ordenar=recente">Obras</a>
-                        </li>
-                        <li className="nav-item m-2">
-                            <a className="nav-link text-white" href="/mapa">Mapa do site</a>
-                        </li>
-                        <li className="nav-item m-2">
-                            <a className="nav-link text-white" href="/sobre">Sobre</a>
-                        </li>
-                        <li style={{textDecoration: "underline", borderRadius: "2px"}} className="nav-item m-2">
-                            <a className="nav-link text-white" href="/admin/login">Admin</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            <Avaliacao />
-           </>
+            <Navbar style={styles.bg} expand="lg">
+                <Container fluid>
+                    <Navbar.Brand href="/">
+                        <img src="/logo.png" alt="" width="40" height="34" />
+                        <label className="text-light text-wrap">OOPG</label>
+                    </Navbar.Brand>
+                    <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link className="text-light" href="/">Início</Nav.Link>
+                            <Nav.Link className="text-light" href="/noticias">Notícias</Nav.Link>
+                            <Nav.Link className="text-light" href="/obras?ordenar=recente">Todas as obras</Nav.Link>
+                            <Nav.Link className="text-light" href="/mapa">Mapa do observatório</Nav.Link>
+                            <Nav.Link className="text-light" href="/sobre">Sobre</Nav.Link>
+                            <Nav.Link className="text-light" href="/termos">Termos</Nav.Link>
+                            <Nav.Link className="text-light" href="/admin/login">Admin</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
         )
     }
 }

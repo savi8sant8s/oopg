@@ -1,23 +1,20 @@
 import { Component } from "react";
 import { Slide } from 'react-slideshow-image';
 import { Chart } from "react-google-charts";
-
 import { 
     Card, 
-    CardHeader, 
-    CardBody, 
     Row, 
     Col,
     Container,
     ListGroup,
-    Button
- } from "reactstrap";
+    ListGroupItem
+ } from "react-bootstrap";
  import axios from "axios";
 import ModeloGrafico from "../services/modelo-grafico";
+import Swal from "sweetalert2";
+import { mostraCarregamento } from "../services/alerta-padrao";
 
-const styles = {
-  cardHeader: { background: "#ff2b32c4", color: "white" }
-}
+
 class Graficos extends Component {
 
   constructor(props) {
@@ -30,6 +27,7 @@ class Graficos extends Component {
   }
 
   async componentDidMount(){
+    mostraCarregamento();
     let modelos = this.state.modelos;
     let modeloGrafico = new ModeloGrafico();
     let res = await axios.get("api/v1/public/estatisticas");
@@ -41,35 +39,32 @@ class Graficos extends Component {
     modelos.push(modeloGrafico.obrasPorAno(res.data));
     modelos.push(modeloGrafico.gastoObrasPorAno(res.data));
     this.setState({modelos: modelos});
+    Swal.close();
   }
 
   render() {
     return (
-      <Card style={{minHeight: "50vh"}}>
-        <CardHeader style={styles.cardHeader}>
-          <h4>Dados do Observatório</h4>
-        </CardHeader>
-        <CardBody>
-          <div className="d-flex justify-content-around">
-          <p>Total de obras: <span className="badge bg-warning">{this.state.qntObras}</span></p>
-          <p>Total investido: <span className="badge bg-warning"> {this.state.gastoTotal}</span></p>
-          </div>
-          <div className="slide-container mt-3" style={{ paddingTop: "60px" }}>
-            <Slide indicators={true}>
-              {this.state.modelos.map((modelo, x)=>
-                <div className="each-slide" key={x}>
-                <h5>{modelo.titulo}</h5>
+      <>
+        <h3>Observatório de Obras Públicas de Garanhuns</h3>
+        <div className="d-flex justify-content-around mt-5">
+          <h5>Total de obras: <span className="badge bg-warning">{this.state.qntObras}</span></h5>
+          <h5>Total investido: <span className="badge bg-warning"> {this.state.gastoTotal}</span></h5>
+        </div>
+        <Card className="slide-container">
+          <Slide indicators={true}>
+            {this.state.modelos.map((modelo, x) =>
+              <div className="each-slide" key={x}>
+                <h4><u>{modelo.titulo}</u></h4>
                 <Chart
                   chartType={modelo.tipo}
                   data={modelo.data}
                   options={modelo.options}
                 />
               </div>
-              )}
-            </Slide>
-          </div>
-        </CardBody>
-      </Card>
+            )}
+          </Slide>
+        </Card>
+      </>
     )
   }
 }
@@ -118,20 +113,18 @@ class Categorias extends Component {
 
   render() {
     return (
-      <Card style={{ minHeight: "50vh" }}>
-        <CardHeader style={{background: "#ff2b32c4", color: "white", color: "white"}}>
-          <h4>Selecione Categoria</h4>
-        </CardHeader>
-        <CardBody>
-          <ListGroup>
-            {this.state.categorias.map((categoria, x)=>
-            <Button onClick={()=>window.location.href= categoria.url} className="d-flex justify-content-between bg-white text-dark" key={x}>
-              <label>{categoria.nome}</label>
-              <img src={categoria.icone} width="50" height="50"></img>
-            </Button>
+      <Card className="p-2">
+        <h4><u>Selecione Categoria</u></h4>
+          <ListGroup variant="flush">
+            {this.state.categorias.map((categoria, x) =>
+              <ListGroupItem action href={categoria.url} key={x}>
+                <div className="container-fluid d-flex justify-content-between">
+                <label>{categoria.nome}</label>
+                <img src={categoria.icone} width="50" height="50"></img>
+                </div>
+              </ListGroupItem>
             )}
           </ListGroup>
-        </CardBody>
       </Card>
     )
   }
@@ -145,28 +138,26 @@ class Noticias extends Component {
     }
   }
   async componentDidMount() {
+    mostraCarregamento();
     let { data } = await axios.get("api/v1/public/noticias?quant=3");
     this.setState({ noticias: data.noticias });
+    Swal.close();
   }
 
   render() {
     return (
-      <Card style={{ minHeight: "50vh" }}>
-        <CardHeader style={styles.cardHeader}>
-          <h4>Últimas notícias</h4>
-        </CardHeader>
-        <CardBody>
+      <Card className="p-2">
+        <h4><u>Últimas notícias</u></h4>
         <div className="slide-container mt-3">
-        <Slide indicators={true}>
-          {this.state.noticias.map((noticia, x) =>
-            <div className="each-slide" key={x}>
-              <p>{noticia.titulo}</p>
-              <img src={noticia.imagemUrl} height="300px" width="300px" onClick={() => { window.location.href = noticia.link }} />
-            </div>
-          )}
-        </Slide>
-      </div>
-        </CardBody>
+          <Slide indicators={true}>
+            {this.state.noticias.map((noticia, x) =>
+              <div className="each-slide" key={x}>
+                <p>{noticia.titulo}</p>
+                <img src={noticia.imagemUrl} height="300px" width="300px" onClick={() => { window.location.href = noticia.link }} />
+              </div>
+            )}
+          </Slide>
+        </div>
       </Card>
     )
   }
@@ -180,21 +171,19 @@ export default class Home extends Component {
 
   render() {
     return (
-      <div className="container-fluid d-flex justify-content-center text-center">
-        <div className="row col-sm-8">
-          <Container className="pt-5">
-              <Graficos />
-            <Row>
-              <Col md="6" className="pt-5">
-                <Categorias />
-              </Col>
-              <Col md="6" className="pt-5">
-                <Noticias />
-              </Col>
-            </Row>
-          </Container>
-        </div>
-      </div>
+      <Container fluid="sm" className="text-center p-5">
+        <Row>
+        <Graficos className="pt-5" />
+        </Row>
+        <Row>
+          <Col sm="6" className="pt-5">
+            <Categorias />
+          </Col>
+          <Col sm="6" className="pt-5">
+            <Noticias />
+          </Col>
+        </Row>
+      </Container>
     )
   }
 }

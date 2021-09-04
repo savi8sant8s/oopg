@@ -1,6 +1,9 @@
 import { Component } from "react";
-import { Container, CardSubtitle, Table, NavLink } from 'reactstrap';
-import styles from '../styles/mapa.module.css';
+import {
+  Container,
+  ListGroup,
+  ListGroupItem
+} from 'react-bootstrap';
 
 export default class Mapa extends Component {
 
@@ -10,62 +13,27 @@ export default class Mapa extends Component {
 
   render() {
     return (
-      <Container className="pt-5">
-        <h4 className="text-center">Navegue pelo Observatório</h4>
-        <CardSubtitle tag="h6" className="mb-2 mt-3 text-muted"><b>Menu</b></CardSubtitle>
-        <div className={styles.line}></div>
-        <Table borderless>
-          <tbody>
-            <tr>
-              <th></th>
-              <td><NavLink className="text-dark" href="/"><b>Página inicial</b></NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href="/noticias"><b>Notícias</b></NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href="/obras?ordenar=recente"><b>Obras</b></NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=saude"}>Saúde</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=educacao"}>Educação</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=assistenciasocial"}>Assistência Social</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=administracao"}>Administração</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente&categoria=urbanismo"}>Urbanismo</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href={"/obras?ordenar=recente"}>Todas</NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href="/mapa"><b>Mapa do Observatório</b></NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href="/sobre"><b>Sobre</b></NavLink></td>
-            </tr>
-            <tr>
-              <th scope="row"></th>
-              <td><NavLink className="text-dark" href="/admin/login"><b>Administrador</b></NavLink></td>
-            </tr>
-          </tbody>
-        </Table>
+      <Container fluid="sm" className="p-5">
+        <h3 className="text-center">Navegue pelo Observatório</h3>
+        <div className="mt-5" style={{ borderBottom: "solid 4px" }}>
+          <h4><b>Menu</b></h4>
+        </div>
+        <ListGroup variant="flush">
+          <ListGroupItem action href="/"><b>Página inicial</b></ListGroupItem>
+          <ListGroupItem action href="/obras?ordenar=recente"><b>Todas as obras</b></ListGroupItem>
+          <ListGroupItem>
+            <ListGroup variant="flush">
+              <ListGroupItem action href={"/obras?ordenar=recente&categoria=saude"}>Saúde</ListGroupItem>
+              <ListGroupItem action href={"/obras?ordenar=recente&categoria=educacao"}>Educação</ListGroupItem>
+              <ListGroupItem action href={"/obras?ordenar=recente&categoria=assistenciasocial"}>Assistência Social</ListGroupItem>
+              <ListGroupItem action href={"/obras?ordenar=recente&categoria=administracao"}>Administração</ListGroupItem>
+              <ListGroupItem action href={"/obras?ordenar=recente&categoria=urbanismo"}>Urbanismo</ListGroupItem>
+            </ListGroup>
+          </ListGroupItem>
+          <ListGroupItem action href="/mapa"><b>Mapa do Observatório</b></ListGroupItem>
+          <ListGroupItem action href="/sobre"><b>Sobre</b></ListGroupItem>
+          <ListGroupItem action href="/admin/login"><b>Administrador</b></ListGroupItem>
+        </ListGroup>
       </Container>
     )
   }

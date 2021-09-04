@@ -1,11 +1,15 @@
 import axios from "axios";
 import { Component } from "react";
 import {
-    Button, 
-    ListGroup, 
+    ListGroup,
     ListGroupItem,
-    Container
-} from 'reactstrap';
+    Container,
+    Col,
+    Row,
+    Card
+} from 'react-bootstrap';
+import Swal from "sweetalert2";
+import { mostraCarregamento } from "../services/alerta-padrao";
 
 export default class Sobre extends Component {
 
@@ -15,29 +19,36 @@ export default class Sobre extends Component {
             noticias: []
         }
     }
-    async componentDidMount(){
-        let {data} = await axios.get("api/v1/public/noticias");
-        this.setState({noticias: data.noticias});
+    async componentDidMount() {
+        mostraCarregamento();
+        let { data } = await axios.get("api/v1/public/noticias");
+        this.setState({ noticias: data.noticias });
+        Swal.close();
     }
 
     render() {
         return (
-            <div className="container-fluid d-flex justify-content-center text-center">
-                <div className="row col-sm-8">
-                    <Container className="mt-5">
-                        <h3>Notícias referentes as obras da cidade de Garanhuns</h3>
-                        <ListGroup>
-                            {this.state.noticias.map((noticia, x) =>
-                                <ListGroupItem key={x}>
-                                    <img width="200px" src={noticia.imagemUrl} />
-                                    <h4>{noticia.titulo}</h4>
-                                    <p>{noticia.mensagem}</p>
-                                </ListGroupItem>
-                            )}
-                        </ListGroup>
-                    </Container>
-                </div>
-            </div>
+            <Container fluid="sm" className="text-center p-5">
+                <h3>Notícias referentes as obras da cidade de Garanhuns</h3>
+                <Card>
+                    <ListGroup variant="flush" className="mt-5">
+                        {this.state.noticias.map((noticia, x) =>
+                            <ListGroupItem action href={noticia.link} key={x}>
+                                <Row>
+                                    <Col sm="8">
+                                        <img width="200px" src={noticia.imagemUrl} />
+                                    </Col>
+                                    <Col sm="4">
+                                        <h4>{noticia.titulo}</h4>
+                                        <p>{noticia.mensagem}</p>
+                                    </Col>
+                                </Row>
+                            </ListGroupItem>
+                        )}
+                    </ListGroup>
+                </Card>
+
+            </Container>
         )
     }
 }

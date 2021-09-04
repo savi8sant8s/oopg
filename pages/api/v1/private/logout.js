@@ -2,9 +2,7 @@ import { STATUS } from "../../../../services/codigo-status";
 import { Validacao } from "../../../../services/validacao";
 import moment from "moment";
 import { capturarExcecoes } from "../../../../middlewares/capturar-excecoes";
-import { PrismaSingleton } from "../../../../services/prisma-singleton";
-
-const prisma = PrismaSingleton.pegarInstancia();
+import prisma from "../../../../services/prisma-db";
 
 export default capturarExcecoes(
     async (req, res) => {

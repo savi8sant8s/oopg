@@ -3,9 +3,7 @@ import { capturarExcecoes } from "../../../../../middlewares/capturar-excecoes";
 import { Validacao } from "../../../../../services/validacao";
 import { STATUS } from "../../../../../services/codigo-status";
 import { schema } from "../../../../../services/schemas";
-import { PrismaSingleton } from "../../../../../services/prisma-singleton";
-
-const prisma = PrismaSingleton.pegarInstancia();
+import prisma from "../../../../../services/prisma-db";
 
 export default capturarExcecoes(
     async (req, res) => {
