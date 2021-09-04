@@ -1,24 +1,30 @@
 import { Component } from "react";
-import { CardBody, Card, CardTitle, CardHeader, NavLink } from "reactstrap";
-import { FormGroup, Label, Col, Input, Table } from "reactstrap";
+import { 
+  Container,
+  NavLink,
+  Table, 
+  InputGroup,
+  FormControl,
+  Card,
+  Row
+} from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import moment from "moment";
+import { mostraCarregamento } from "../services/alerta-padrao";
 
 class ListaObras extends Component {
   constructor(props){
     super(props);
     this.state = {
-      obras: [],
-      quantObras: 0
+      obras: []
     }
   }
 
   async componentDidMount() {
-    Swal.showLoading();
+    mostraCarregamento();
     let { data } = await axios.get(this.pegarUrl());
     Swal.close();
-    this.setState({ quantObras: data.quantObras });
     this.setState({ obras: data.obras });
   }
 
@@ -36,10 +42,9 @@ class ListaObras extends Component {
 
   render(){
     return (
-      <div className="text-center"> 
-      {this.state.quantObras > 0 ? <h3>{this.state.quantObras} obras</h3> : <></> }  
-      <Table>
-      <thead>
+      <Card>
+        <Table striped>
+          <thead>
             <tr>
               <th>Ano</th>
               <th>Descrição</th>
@@ -56,7 +61,7 @@ class ListaObras extends Component {
             )}
           </tbody>
         </Table>
-      </div>
+      </Card>
     )
   }
 }
@@ -72,7 +77,7 @@ class Filtros extends Component {
     this.onManipularMudanca = this.onManipularMudanca.bind(this);
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     this.setState({
       categoria: this.props.query.categoria,
       ordenar: this.props.query.ordenar
@@ -99,35 +104,27 @@ class Filtros extends Component {
 
   render(){
     return (
-      <div>
-        <div className="mb-2">
-          <FormGroup row>
-            <Label sm={2} >Filtrar por</Label>
-            <Col sm={10}>
-              <Input onChange={this.onManipularMudanca} value={this.state.categoria} name="categoria" type="select">
-                <option value="">Todas</option>
-                <option value="saude">Saúde</option>
-                <option value="educacao">Educação</option>
-                <option value="assistenciasocial">Assistência Social</option>
-                <option value="administracao">Administração</option>
-                <option value="urbanismo">Urbanismo</option>
-              </Input>
-            </Col>
-          </FormGroup>
-        </div>
-        <div className="mb-2">
-          <FormGroup row>
-            <Label sm={2}>Ordenar por</Label>
-            <Col sm={10}>
-              <Input onChange={this.onManipularMudanca} value={this.state.ordenar} name="ordenar" type="select">
+      <>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Filtrar por</InputGroup.Text>
+            <FormControl as="select" onChange={this.onManipularMudanca} value={this.state.categoria} name="categoria">
+              <option value="">Todas</option>
+              <option value="saude">Saúde</option>
+              <option value="educacao">Educação</option>
+              <option value="assistenciasocial">Assistência Social</option>
+              <option value="administracao">Administração</option>
+              <option value="urbanismo">Urbanismo</option>
+            </FormControl>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Ordenar por</InputGroup.Text>
+              <FormControl as="select" onChange={this.onManipularMudanca} value={this.state.ordenar} name="ordenar">
                 <option value="">Todas</option>
                 <option value="recente">Mais recente</option>
                 <option value="antigo">Mais antigo</option>
-              </Input>
-            </Col>
-          </FormGroup>
-        </div>
-      </div>
+              </FormControl>
+          </InputGroup>
+      </>
     )
   }
 }
@@ -144,19 +141,13 @@ export default class Obras extends Component {
 
   render() {
     return (
-      <div className="container-fluid row d-flex justify-content-center">
-        <div className="row col-sm-8">
-          <Card className="mt-3">
-            <CardHeader>
-              <CardTitle className="text-center" tag="h5">Selecione uma obra</CardTitle>
-              <Filtros query={this.props.query}/>
-            </CardHeader>
-            <CardBody>
-              <ListaObras query={this.props.query} />
-            </CardBody>
-          </ Card>
+      <Container fluid="sm" className="text-center p-5">
+        <h3>Obras públicas de Garanhuns</h3>
+        <div className="mt-5">
+          <Filtros query={this.props.query} />
+          <ListaObras query={this.props.query} />
         </div>
-      </div>
+      </Container>
     )
   }
 }

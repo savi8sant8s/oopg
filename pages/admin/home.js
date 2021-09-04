@@ -83,7 +83,6 @@ class ImportarPlanilha extends Component {
         mostrarAlerta('Problema inesperado', 'Contate o mantenedor do sistema pela página "Sobre".');
       });
     }).catch((erro) => {
-      console.log(erro);
       this.onIndicarPreenchimentoCorreto(erro, corpo);
     });
   }

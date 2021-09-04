@@ -1,27 +1,26 @@
 import { Component } from "react";
 import {
+  Container,
   Card,
-  FormGroup,
-  Label,
-  Input,
-  CardBody,
+  InputGroup,
   ListGroup,
   ListGroupItem,
   Row,
   Col,
-  CardHeader,
   ButtonGroup,
-  Button
-} from "reactstrap";
+  Button,
+  FormControl
+} from "react-bootstrap";
 import { GoogleLogin } from 'react-google-login';
 import axios from "axios";
 import moment from 'moment';
-moment.locale('pt-br');
 import { schema } from "../../services/schemas";
 import { STATUS } from "../../services/codigo-status";
-import { mostrarAlerta } from "../../services/alerta-padrao";
+import { mostraCarregamento, mostrarAlerta } from "../../services/alerta-padrao";
 import { formVazio } from "../../services/form-vazio";
 import Swal from "sweetalert2";
+
+moment.locale('pt-br');
 
 class LoginGoogle extends Component {
 
@@ -184,27 +183,28 @@ class Interacao extends Component {
                 <Card className="p-3">
                     <div className="text-center">
                         <h5>O que você achou?</h5>
-                        <div className="input-group">
-                            <select onChange={this.manipularMudanca} value={this.state.nota} name="nota" className="form-control custom-select">
+                        <InputGroup>
+                        <InputGroup.Text>Nota:</InputGroup.Text>
+                            <FormControl as="select" onChange={this.manipularMudanca} value={this.state.nota} name="nota">
                                 <option value={0}>Selecione:</option>
                                 <option value={1}>👍</option>
                                 <option value={2}>😐</option>
                                 <option value={3}>👎</option>
-                            </select>
+                            </FormControl>
                             <div className="input-group-append">
                                 <LoginGoogle disabled={this.state.nota == ""} onHandle={this.onVotar} text="Votar" />
                             </div>
-                        </div>
+                        </InputGroup>
                     </div>
                     <p className="text-center mt-2">ou</p>
-                    <FormGroup>
-                        <Label>Título:</Label>
-                        <Input type="text" name="titulo" value={this.state.titulo} onChange={this.manipularMudanca} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label>Mensagem:</Label>
-                        <Input type="text" name="mensagem" value={this.state.mensagem} onChange={this.manipularMudanca} />
-                    </FormGroup>
+                    <InputGroup>
+                        <InputGroup.Text>Título:</InputGroup.Text>
+                        <FormControl type="text" name="titulo" value={this.state.titulo} onChange={this.manipularMudanca} />
+                    </InputGroup>
+                    <InputGroup>
+                        <InputGroup.Text>Mensagem:</InputGroup.Text>
+                        <FormControl type="text" name="mensagem" value={this.state.mensagem} onChange={this.manipularMudanca} />
+                    </InputGroup>
                     <div className="mt-3 container row col text-center">
                         <LoginGoogle text="Comentar" disabled={this.state.titulo == "" && this.state.mensagem == ""} onHandle={this.onComentar} />
                     </div>
@@ -232,11 +232,13 @@ class Comentarios extends Component {
     }
 
     async onPegarComentarios() {
+        mostraCarregamento();
         let { data } = await axios.get(`/api/v1/public/comentarios/${this.props.obraId}`);
         let comentarios = {
             itens: data.comentarios,
             quant: data.quantComentarios
         }
+        Swal.close();
         this.setState({ comentarios: comentarios });
     }
 
@@ -276,7 +278,7 @@ class Informacoes extends Component {
                 aditivoPrazoAditado: "",
                 aditivoValorAditado: "",
                 categoria: "",
-                contratadoCpfCcnpj: "",
+                contratadoCpfCnpj: "",
                 contratadoRazaoSocial: "",
                 contratoDataConclusao: "",
                 contratoDataInicio: "",
@@ -309,73 +311,73 @@ class Informacoes extends Component {
     }
 
     async onPegarInformacoes() {
+        mostraCarregamento();
         let { data } = await axios.get(`/api/v1/public/obra/${this.props.obraId}`);
+        Swal.close();
         this.setState({ obra: data.obra });
     }
 
     render() {
         return (
-            <Card className="mt-3">
-                <CardHeader>
-                    <h3 className="text-center">Obra/Serviço {this.state.obra.numeroLicitacao}</h3>
-                </CardHeader>
-                <CardBody>
-                <Row className="justify-content-center">
-                        <h4 className="text-center"><strong>Informações gerais</strong></h4>
+            <>
+                <h3 className="text-center">Obra {this.state.obra.numeroLicitacao}</h3>
+                <Card className="mt-5 p-3">
+                    <Row>
+                        <h4 className="text-center"><strong><u>Informações gerais</u></strong></h4>
                         <Col>
                             <p><strong>Categoria:</strong> {this.state.obra.categoria}</p>
                             <p><strong>Descrição:</strong> {this.state.obra.descricao}</p>
                         </Col>
                         <Col>
                             <p><strong>Situação:</strong> {this.state.obra.situacao}</p>
-                            <p><strong>Valor pago acumulado:</strong> {this.state.obra.valorPagoAcumulado}</p>
+                            <p><strong>Valor pago acumulado:</strong> {this.state.obra.valorPagoAcumulado?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
                         </Col>
                     </Row>
-                    <Row className="justify-content-center">
+                    <Row>
                         <h4 className="text-center"><strong>Contratado</strong></h4>
                         <Col>
-                            <p><strong>CPF/CNPJ:</strong> {this.state.obra.contratadoCpfCcnpj}</p>
+                            <p><strong>CPF/CNPJ:</strong> {this.state.obra.contratadoCpfCnpj}</p>
                         </Col>
                         <Col>
                             <p><strong>Razão social:</strong> {this.state.obra.contratadoRazaoSocial}</p>
                         </Col>
                     </Row>
-                    <Row className="justify-content-center">
+                    <Row>
                         <h4 className="text-center"><strong>Contrato</strong></h4>
                         <Col>
-                            <p><strong>Prazo:</strong> {this.state.obra.contratoPrazo}</p>
-                            <p><strong>Data de início:</strong> {this.state.obra.contratoDataInicio}</p>
-                            <p><strong>Data de conclusão:</strong> {this.state.obra.contratoDataConclusao}</p>
+                            <p><strong>Prazo para conclusão:</strong> {moment(this.state.obra.contratoPrazo).format('LL')}</p>
+                            <p><strong>Data de início:</strong> {moment(this.state.obra.contratoDataInicio).format('LL')}</p>
+                            <p><strong>Data de conclusão:</strong> {moment(this.state.obra.contratoDataConclusao).format('LL')}</p>
                         </Col>
                         <Col>
                             <p><strong>Número do ano:</strong> {this.state.obra.contratoNumeroAno}</p>
-                            <p><strong>Valor contratado:</strong> {this.state.obra.contratoValorContratado}</p>
+                            <p><strong>Valor contratado:</strong> {this.state.obra.contratoValorContratado.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
                         </Col>
                     </Row>
-                    <Row className="justify-content-center">
+                    <Row>
                         <h4 className="text-center"><strong>Execução</strong></h4>
                         <Col>
                             <p><strong>Natureza da despesa:</strong> {this.state.obra.execucaoNaturezaDespesa}</p>
-                            <p><strong>Reajuste:</strong> {this.state.obra.execucaoReajuste}</p>
+                            <p><strong>Reajuste:</strong> {this.state.obra.execucaoReajuste?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
                         </Col>
                         <Col>
-                            <p><strong>Valor medido acumulado:</strong> {this.state.obra.execucaoValorMedidoAcumulado}</p>
-                            <p><strong>Valor pago acumulado no exercício:</strong> {this.state.obra.execucaoValorPagoAcumuladoExercicio}</p>
-                            <p><strong>Valor pago acumulado no período:</strong> {this.state.obra.execucaoValorPagoAcumuladoPeriodo}</p>
+                            <p><strong>Valor medido acumulado:</strong> {this.state.obra.execucaoValorMedidoAcumulado?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
+                            <p><strong>Valor pago acumulado no exercício:</strong> {this.state.obra.execucaoValorPagoAcumuladoExercicio?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
+                            <p><strong>Valor pago acumulado no período:</strong> {this.state.obra.execucaoValorPagoAcumuladoPeriodo?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
                         </Col>
                     </Row>
-                    <Row className="justify-content-center">
+                    <Row>
                         <h4 className="text-center"><strong>Convênio</strong></h4>
                         <Col>
                             <p><strong>Concedente:</strong> {this.state.obra.convenioConcedente}</p>
                             <p><strong>Número do ano:</strong> {this.state.obra.convenioNumeroAno}</p>
                         </Col>
                         <Col>
-                            <p><strong>Contrapartida:</strong> {this.state.obra.convenioContrapartida}</p>
-                            <p><strong>Repasse:</strong> {this.state.obra.convenioRepasse}</p>
+                            <p><strong>Contrapartida:</strong> {this.state.obra.convenioContrapartida?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
+                            <p><strong>Repasse:</strong> {this.state.obra.convenioRepasse?.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</p>
                         </Col>
                     </Row>
-                    <Row className="justify-content-center">
+                    <Row>
                         <h4 className="text-center"><strong>Aditivo</strong></h4>
                         <Col>
                             <p><strong>Prazo aditado:</strong> {this.state.obra.aditivoPrazoAditado}</p>
@@ -384,8 +386,8 @@ class Informacoes extends Component {
                             <p><strong>Valor aditado:</strong> {this.state.obra.aditivoValorAditado}</p>
                         </Col>
                     </Row>
-                </CardBody>
-            </Card>
+                </Card>
+            </>
         )
     }
 }
@@ -408,7 +410,7 @@ class Notas extends Component {
     }
 
     async onPegarNotas() {
-        Swal.showLoading();
+        mostraCarregamento();
         let { data } = await axios.get(`/api/v1/public/notas/${this.props.obraId}`);
         Swal.close();
         let notas = {
@@ -421,11 +423,13 @@ class Notas extends Component {
 
     render() {
         return (
-            <ButtonGroup size="sm" className="mt-3">
-                <Button color="light">👍 {this.state.notas.gostou}</Button>
-                <Button color="light">😐 {this.state.notas.indiferente}</Button>
-                <Button color="light">👎 {this.state.notas.naogostou}</Button>
-            </ButtonGroup>
+            <div class="d-flex justify-content-center row">
+                <ButtonGroup size="lg" className="mt-3 col-sm-6">
+                    <Button className="bg-light text-dark border-danger">👍 {this.state.notas.gostou}</Button>
+                    <Button className="bg-light text-dark border-danger">😐 {this.state.notas.indiferente}</Button>
+                    <Button className="bg-light text-dark border-danger">👎 {this.state.notas.naogostou}</Button>
+                </ButtonGroup>
+            </div>
         )
     }
 }
@@ -442,14 +446,12 @@ export default class Obra extends Component {
 
     render() {
         return (
-            <div className="container-fluid row d-flex justify-content-center">
-                <div className="row col-sm-8">
-                    <Informacoes obraId={this.props.query.obraId} />
-                    <Notas obraId={this.props.query.obraId} />
-                    <Interacao obraId={this.props.query.obraId} />
-                    <Comentarios obraId={this.props.query.obraId} />
-                </div>
-            </div>
+            <Container fluid="sm" className="p-5">
+                <Informacoes obraId={this.props.query.obraId} />
+                <Notas obraId={this.props.query.obraId} />
+                <Interacao obraId={this.props.query.obraId} />
+                <Comentarios obraId={this.props.query.obraId} />
+            </Container>
         )
     }
 }

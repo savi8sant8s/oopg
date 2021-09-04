@@ -4,11 +4,10 @@ import { OAuth2Client } from "google-auth-library";
 import moment from "moment";
 import bcrypt from "bcrypt";
 import { dispararExcecao } from "./erro-padrao";
-import { PrismaSingleton } from "./prisma-singleton";
+import prisma from "./prisma-db";
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
-const prisma = PrismaSingleton.pegarInstancia();
 
 moment().locale("pt-br");
 
