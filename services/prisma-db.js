@@ -1,15 +1,14 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
 
-let prisma
+class PrismaSingleton {
+    static instancia;
 
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient()
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient()
-  }
+    static pegarInstancia() {
+        if (!this.instancia) {
+            this.instancia = new PrismaClient();
+        }
+        return this.instancia;
+    }
+};
 
-  prisma = global.prisma
-}
-
-export default prisma;
+export default PrismaSingleton.pegarInstancia();
