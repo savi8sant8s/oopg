@@ -1,14 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client'
 
-class PrismaSingleton {
-    static instancia;
+// See here: https://github.com/prisma/prisma-client-js/issues/228#issuecomment-618433162
+let prisma
 
-    static pegarInstancia() {
-        if (!this.instancia) {
-            this.instancia = new PrismaClient();
-        }
-        return this.instancia;
-    }
-};
+if (process.env.NODE_ENV === 'production') {
+	prisma = new PrismaClient()
+}
+else {
+	if (!global.prisma) {
+		global.prisma = new PrismaClient()
+	}
 
-export default PrismaSingleton.pegarInstancia();
+	prisma = global.prisma
+}
+
+export default prisma;
