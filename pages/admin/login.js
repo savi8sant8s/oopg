@@ -78,7 +78,7 @@ export default class AdminLogin extends Component {
         return (
             <Container fluid="sm" className="text-center p-5 d-flex justify-content-center">
                 <Card className="mt-5 p-3 row col-sm-6">
-                    <h3 className="text-center"><u>Login</u></h3>
+                    <h3 className="text-center">Login</h3>
                     <FormGroup>
                         <InputGroup className="mb-3">
                             <FormControl placeholder="Email" onChange={this.onManipularMudanca} value={this.state.email} type="email" name="email" />

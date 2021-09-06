@@ -4,6 +4,7 @@ import {
     Container,
     Nav,
 } from "react-bootstrap";
+import Avaliacao from "./Avaliacao";
 
 const styles = {
     bg: {
@@ -18,16 +19,21 @@ export default class Menu extends Component {
     }
 
     render() {
+        const styles = {
+            backgroundColor: "#960001",
+            backgroundImage: "linear-gradient(315deg, #ed2939, #dc143c)"
+          };
         return (
-            <Navbar style={styles.bg} expand="lg">
+            <>
+            <Navbar style={styles} expand="lg">
                 <Container fluid>
                     <Navbar.Brand href="/">
-                        <img src="/logo.png" alt="" width="40" height="34" />
-                        <label className="text-light text-wrap">OOPG</label>
+                        
+                        <label className="text-light text-wrap" style={{marginLeft:"15px"}}>OOPG</label>
                     </Navbar.Brand>
                     <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
+                    <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
+                        <Nav className="nav navbar-nav ml-auto">
                             <Nav.Link className="text-light" href="/">Início</Nav.Link>
                             <Nav.Link className="text-light" href="/noticias">Notícias</Nav.Link>
                             <Nav.Link className="text-light" href="/obras?ordenar=recente">Todas as obras</Nav.Link>
@@ -39,6 +45,8 @@ export default class Menu extends Component {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+            <Avaliacao/>
+            </>
         )
     }
 }
