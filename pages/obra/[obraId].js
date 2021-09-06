@@ -20,8 +20,6 @@ import { mostraCarregamento, mostrarAlerta } from "../../services/alerta-padrao"
 import { formVazio } from "../../services/form-vazio";
 import Swal from "sweetalert2";
 
-moment.locale('pt-br');
-
 class LoginGoogle extends Component {
 
     constructor(props) {
