@@ -20,7 +20,7 @@ export default function OOPG({ Component, pageProps }) {
         <link href={"https://fonts.googleapis.com/css2?family=Roboto&display=swap"} rel="stylesheet" />
       </Head>
       <Menu />
-      <Component {...pageProps} />
+      <Component style={{minHeight:"80vh"}} {...pageProps} />
       <Footer />
     </>
   )

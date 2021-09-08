@@ -56,7 +56,7 @@ class ListaObras extends Component {
               <tr key={x}>
                 <td>{moment(obra.contratoDataInicio).format("YYYY")}</td>
                 <td>{obra.descricao.slice(0, 100) + "..."}</td>
-                <td><NavLink href={`/obra/${obra.id}`}>Ver mais</NavLink></td>
+                <td><NavLink style={{color:"red"}} href={`/obra/${obra.id}`}>Ver mais</NavLink></td>
               </tr>
             )}
           </tbody>
